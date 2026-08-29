@@ -1,0 +1,33 @@
+networks:
+  recipes_app:
+
+volumes:
+  recipes_app_data: {}
+
+services:
+  db:
+    image: postgres:17
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: recipes_app
+    volumes:
+      - recipes_app_data:/var/lib/postgresql/data
+    networks:
+      - recipes_app
+
+  # Ephemeral database for e2e tests (vitest.config.e2e.ts points here)
+  db-test:
+    image: postgres:17
+    ports:
+      - '5433:5432'
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: recipes_app_test
+    tmpfs:
+      - /var/lib/postgresql/data
+    networks:
+      - recipes_app
