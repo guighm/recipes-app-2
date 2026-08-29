@@ -1,0 +1,127 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=IBM+Plex+Mono:wght@400;500&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@import "tailwindcss";
+
+/* ---------- "Tile notebook" theme ---------- */
+
+@theme {
+    /* Typography */
+    --font-display: "Fraunces", Georgia, serif;
+    --font-body: "Plus Jakarta Sans", system-ui, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+    /* Palette — porcelain and tile */
+    --color-porcelain: #FBFAF7;
+    --color-white: #FFFFFF;
+    --color-cobalt: #1D4E8F;
+    --color-cobalt-ink: #12355F;
+    --color-cobalt-mist: #E5ECF6;
+    --color-ink: #22283A;
+    --color-ink-soft: #5B6374;
+    --color-butter: #E9A93E;
+    --color-error: #B3321E;
+    --color-error-mist: #FBEAE6;
+    --color-border: #D9D6CD;
+
+    /* Card shadows */
+    --shadow-card: 0 1px 2px rgba(34, 40, 58, 0.05), 0 10px 28px rgba(34, 40, 58, 0.07);
+    --shadow-card-lifted: 0 2px 4px rgba(34, 40, 58, 0.07), 0 14px 34px rgba(29, 78, 143, 0.13);
+
+    /* Page entrance */
+    --animate-rise: rise 0.45s ease-out both;
+    @keyframes rise {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+}
+
+@layer base {
+    body {
+        background-color: var(--color-porcelain);
+        color: var(--color-ink);
+        font-family: var(--font-body);
+        line-height: 1.6;
+    }
+
+    h1,
+    h2,
+    h3 {
+        font-family: var(--font-display);
+        font-weight: 600;
+        line-height: 1.15;
+        color: var(--color-cobalt-ink);
+    }
+
+    a {
+        color: var(--color-cobalt);
+    }
+
+    img {
+        display: block;
+        max-width: 100%;
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--color-cobalt);
+        outline-offset: 2px;
+    }
+
+    input {
+        font: inherit;
+        color: var(--color-ink);
+        background: var(--color-porcelain);
+        border: 1px solid var(--color-border);
+        border-radius: 0.5rem;
+        padding: 0.65rem 0.8rem;
+        width: 100%;
+    }
+
+    input::placeholder {
+        color: #A6AAB6;
+    }
+
+    input:focus-visible {
+        outline: none;
+        border-color: var(--color-cobalt);
+        box-shadow: 0 0 0 3px var(--color-cobalt-mist);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+        *,
+        *::before,
+        *::after {
+            animation: none !important;
+            transition: none !important;
+        }
+    }
+}
+
+/* ---------- Interface signatures ---------- */
+
+/* Width of each page's content column. */
+@utility page {
+    width: min(1080px, 100% - 2.5rem);
+    margin-inline: auto;
+}
+
+/* Tile frieze — cobalt diamond and butter dot. */
+@utility frieze {
+    height: 14px;
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='14' viewBox='0 0 26 14'><path d='M7 2 12 7 7 12 2 7Z' fill='none' stroke='%231D4E8F' stroke-width='1.5'/><circle cx='19' cy='7' r='1.8' fill='%23E9A93E'/></svg>");
+    background-repeat: repeat-x;
+    background-position: top center;
+}
+
+/* Label utility: mono, uppercase, letter-spaced. */
+@utility label {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
