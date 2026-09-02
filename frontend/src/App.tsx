@@ -7,13 +7,12 @@ import RegisterPage from './pages/RegisterPage';
 import CreateRecipePage from './pages/CreateRecipePage';
 import RecipeDetailPage from './pages/RecipeDetailPage';
 import NotFoundPage from './pages/NotFoundPage';
-import './App.css';
 
 export default function App() {
   return (
-    <div className="app">
+    <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="main">
+      <main className="*:animate-surgir flex-1 pt-8 pb-16">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />

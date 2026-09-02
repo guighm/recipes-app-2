@@ -7,8 +7,8 @@ import { useNavigate } from 'react-router';
 import { ApiError, apiFetch } from '../lib/api';
 import type { CreateRecipeDTO } from '../models/recipe';
 import Asterisco from './Asterisco';
+import { Button } from './Button';
 import ErrorMessage from './ErrorMessage';
-import './CreateRecipeForm.css';
 
 const createRecipeSchema = z.object({
   title: z.string().min(1, 'Campo Obrigatório!'),
@@ -57,46 +57,84 @@ export default function CreateRecipeForm() {
   };
 
   return (
-    <section className="create-recipe-form">
-      <h2>Cadastre uma nova receita</h2>
-      {imageUrl && <img src={imageUrl} alt="Pré-visualização da imagem da receita" />}
-      <form onSubmit={handleSubmit(onSubmit)} className="formulario">
-        <div className="campo">
-          <label htmlFor="title">Título: <Asterisco /></label>
-          <input type="text" id="title" placeholder="Título" {...register('title')} />
+    <section className="mx-auto flex w-[min(560px,100%)] flex-col gap-[1.3rem] rounded-xl border border-borda bg-branco px-[2.2rem] py-8 shadow-sombra">
+      <h2 className="text-[1.65rem]">Nova receita</h2>
+      <p className="mt-[-0.6rem] text-[0.8rem] text-tinta-suave">
+        Preencha os detalhes do prato. Os campos obrigatórios estão marcados (<Asterisco />)
+      </p>
+      {imageUrl && (
+        <figure className="flex flex-col gap-1.5">
+          <img
+            className="aspect-video w-full rounded-lg border border-borda object-cover"
+            src={imageUrl}
+            alt="Pré-visualização da foto da receita"
+          />
+          <figcaption className="rotulo text-center text-[0.66rem] text-tinta-suave">Pré-visualização da foto</figcaption>
+        </figure>
+      )}
+      <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-2 items-start gap-[1.1rem] max-[480px]:grid-cols-1">
+        <div className="col-span-full flex flex-col items-stretch gap-1.5">
+          <label htmlFor="title" className="rotulo text-[0.72rem] font-medium text-tinta-suave">
+            Título <Asterisco />
+          </label>
+          <input type="text" id="title" placeholder="Ex.: Bolo de cenoura da vovó" {...register('title')} />
           <ErrorMessage message={errors.title?.message} />
         </div>
-        <div className="campo">
-          <label htmlFor="description">Descrição: <Asterisco /></label>
-          <input type="text" id="description" placeholder="Descrição" {...register('description')} />
+        <div className="col-span-full flex flex-col items-stretch gap-1.5">
+          <label htmlFor="description" className="rotulo text-[0.72rem] font-medium text-tinta-suave">
+            Descrição <Asterisco />
+          </label>
+          <input type="text" id="description" placeholder="Uma frase sobre o prato" {...register('description')} />
           <ErrorMessage message={errors.description?.message} />
         </div>
-        <div className="campo">
-          <label htmlFor="preparationTime">Tempo de Preparação: <Asterisco /> </label>
-          <input type="number" id="preparationTime" placeholder="Tempo de Preparação" {...register('preparationTime', { valueAsNumber: true })} />
+        <div className="flex flex-col items-stretch gap-1.5">
+          <label htmlFor="preparationTime" className="rotulo text-[0.72rem] font-medium text-tinta-suave">
+            Tempo de preparo (min) <Asterisco />
+          </label>
+          <input
+            type="number"
+            id="preparationTime"
+            placeholder="Ex.: 45"
+            {...register('preparationTime', { valueAsNumber: true })}
+          />
           <ErrorMessage message={errors.preparationTime?.message} />
         </div>
-        <div className="campo">
-          <label htmlFor="servings">Número de porções: <Asterisco /> </label>
-          <input type="number" id="servings" placeholder="Número de Porções" {...register('servings', { valueAsNumber: true })} />
+        <div className="flex flex-col items-stretch gap-1.5">
+          <label htmlFor="servings" className="rotulo text-[0.72rem] font-medium text-tinta-suave">
+            Porções <Asterisco />
+          </label>
+          <input
+            type="number"
+            id="servings"
+            placeholder="Ex.: 4"
+            {...register('servings', { valueAsNumber: true })}
+          />
           <ErrorMessage message={errors.servings?.message} />
         </div>
-        <div className="campo">
-          <label htmlFor="difficulty">Dificuldade: <Asterisco /> </label>
-          <input type="text" id="difficulty" placeholder="Dificuldade" {...register('difficulty')} />
+        <div className="flex flex-col items-stretch gap-1.5">
+          <label htmlFor="difficulty" className="rotulo text-[0.72rem] font-medium text-tinta-suave">
+            Dificuldade <Asterisco />
+          </label>
+          <input type="text" id="difficulty" placeholder="Ex.: Fácil" {...register('difficulty')} />
           <ErrorMessage message={errors.difficulty?.message} />
         </div>
-        <div className="campo">
-          <label htmlFor="imageUrl">Imagem: <Asterisco /> </label>
-          <input type="text" id="imageUrl" placeholder="Imagem" {...register('imageUrl')} />
+        <div className="flex flex-col items-stretch gap-1.5">
+          <label htmlFor="imageUrl" className="rotulo text-[0.72rem] font-medium text-tinta-suave">
+            URL da foto <Asterisco />
+          </label>
+          <input type="text" id="imageUrl" placeholder="https://…" {...register('imageUrl')} />
           <ErrorMessage message={errors.imageUrl?.message} />
         </div>
-        <button type="submit" disabled={!isValid || isSubmitting}>
-          {isSubmitting ? 'Enviando…' : 'Enviar'}
-        </button>
-        {apiError && <p className="erro-api">{apiError}</p>}
+        <Button
+          type="submit"
+          variant="primario"
+          className="col-span-full"
+          disabled={!isValid || isSubmitting}
+        >
+          {isSubmitting ? 'Publicando…' : 'Publicar receita'}
+        </Button>
+        {apiError && <ErrorMessage message={apiError} className="col-span-full" />}
       </form>
-      <p className="observacao">Os campos obrigatórios estão marcados (<Asterisco />)</p>
     </section>
   );
 }
