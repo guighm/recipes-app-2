@@ -1,3 +1,8 @@
+FROM ubuntu:latest
+
+LABEL image.name="recipes_app_2"
+LABEL version="1.0"
+
 # ---- build stage ----
 FROM node:24-alpine AS build
 WORKDIR /app
