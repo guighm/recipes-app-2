@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class IngredientDto {
-  @ApiProperty()
+  @ApiProperty({ example: 1 })
   id!: number;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'Spaghetti' })
   name!: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: '200g' })
   quantity!: string;
 }

@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class StepDto {
-  @ApiProperty()
+  @ApiProperty({ example: 1 })
   id!: number;
 
-  @ApiProperty()
+  @ApiProperty({ example: 1, description: 'Order of the step within the recipe' })
   stepNumber!: number;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'Boil the pasta in salted water until al dente.' })
   description!: string;
 }
