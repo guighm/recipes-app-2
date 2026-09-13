@@ -5,9 +5,8 @@ import { useToast } from '@/core/components/ui/useToast';
 import { apiFetch, errorMessage } from '@/core/config/api';
 import {
   PASSWORD_MAX_LENGTH,
-  PASSWORD_MIN_LENGTH,
-  PASSWORD_PATTERN,
-  PASSWORD_PATTERN_MESSAGE,
+  PASSWORD_REQUIREMENTS_MESSAGE,
+  isPasswordValid,
 } from '@/core/validation/password';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
@@ -21,9 +20,8 @@ const passwordSchema = z
     currentPassword: z.string().min(1, 'This field is required.').max(PASSWORD_MAX_LENGTH),
     newPassword: z
       .string()
-      .min(PASSWORD_MIN_LENGTH, `Minimum of ${PASSWORD_MIN_LENGTH} characters.`)
       .max(PASSWORD_MAX_LENGTH)
-      .regex(PASSWORD_PATTERN, PASSWORD_PATTERN_MESSAGE),
+      .refine(isPasswordValid, { message: PASSWORD_REQUIREMENTS_MESSAGE }),
     confirmNewPassword: z.string().min(1, 'This field is required.'),
   })
   .refine((data) => data.newPassword === data.confirmNewPassword, {
@@ -86,7 +84,7 @@ export default function PasswordForm() {
         <TextField
           label="New password"
           type="password"
-          placeholder={`Minimum of ${PASSWORD_MIN_LENGTH} characters, with upper/lowercase, a number and a symbol`}
+          placeholder="Create a new password"
           required
           maxLength={PASSWORD_MAX_LENGTH}
           registration={register('newPassword')}

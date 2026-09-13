@@ -8,9 +8,8 @@ import { apiFetch, errorMessage } from '@/core/config/api';
 import { EMAIL_MAX_LENGTH, EMAIL_PATTERN } from '@/core/validation/email';
 import {
   PASSWORD_MAX_LENGTH,
-  PASSWORD_MIN_LENGTH,
-  PASSWORD_PATTERN,
-  PASSWORD_PATTERN_MESSAGE,
+  PASSWORD_REQUIREMENTS_MESSAGE,
+  isPasswordValid,
 } from '@/core/validation/password';
 import Asterisk from '@/core/components/Asterisk';
 import { TextField } from '@/core/components/ui/Field';
@@ -30,9 +29,8 @@ const registerSchema = z.object({
     .regex(EMAIL_PATTERN, 'Enter a valid e-mail.'),
   password: z
     .string()
-    .min(PASSWORD_MIN_LENGTH, `Minimum of ${PASSWORD_MIN_LENGTH} characters.`)
     .max(PASSWORD_MAX_LENGTH)
-    .regex(PASSWORD_PATTERN, PASSWORD_PATTERN_MESSAGE),
+    .refine(isPasswordValid, { message: PASSWORD_REQUIREMENTS_MESSAGE }),
   avatarUrl: z.string().min(1, 'This field is required.').max(AVATAR_URL_MAX_LENGTH),
 });
 
@@ -89,7 +87,7 @@ export default function RegisterForm() {
         <TextField
           label="Password"
           type="password"
-          placeholder={`Minimum of ${PASSWORD_MIN_LENGTH} characters, with upper/lowercase, a number and a symbol`}
+          placeholder="Create a password"
           required
           maxLength={PASSWORD_MAX_LENGTH}
           registration={register('password')}
