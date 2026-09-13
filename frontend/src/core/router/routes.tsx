@@ -1,6 +1,7 @@
 import PrivateRoute from "@/features/auth/components/PrivateRoute";
 import LoginPage from "@/features/auth/pages/LoginPage";
 import RegisterPage from "@/features/auth/pages/RegisterPage";
+import AccountPage from "@/features/account/pages/AccountPage";
 import CreateRecipePage from "@/features/recipes/pages/CreateRecipePage";
 import HomePage from "@/features/recipes/pages/HomePage";
 import RecipeDetailPage from "@/features/recipes/pages/RecipeDetailPage";
@@ -20,6 +21,12 @@ export const router = createBrowserRouter([
       },
       { path: '/login', element: <LoginPage /> },
       { path: '/register', element: <RegisterPage /> },
+      {
+        path: '/account', element:
+          <PrivateRoute>
+            <AccountPage />
+          </PrivateRoute>
+      },
       {
         path: '/recipe',
         children: [

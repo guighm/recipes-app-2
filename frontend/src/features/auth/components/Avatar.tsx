@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { resolveAssetUrl } from '@/core/config/api';
 import type { UserDTO } from '../types/user';
 
 const initialsSize = 'h-9 w-9 text-[0.9rem]';
@@ -19,7 +20,7 @@ export default function Avatar({ user }: { user: UserDTO }) {
     <div className="flex items-center gap-2.5" title={user.name}>
       {user.avatarUrl && !imageFailed ? (
         <img
-          src={user.avatarUrl}
+          src={resolveAssetUrl(user.avatarUrl)}
           alt={user.name}
           className="h-9 w-9 rounded-full border border-border object-cover"
           onError={() => setImageFailed(true)}

@@ -48,6 +48,26 @@ export const steps = pgTable('steps', {
   description: text('description').notNull(),
 });
 
+export const passwordHistory = pgTable('password_history', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  password: varchar('password', { length: 255 }).notNull(),
+  createdAt: timestamp('created_at', { precision: 3 }).notNull(),
+});
+
+export const friendships = pgTable('friendships', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  friendId: integer('friend_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at', { precision: 3 }).notNull(),
+});
+
 // The two tables below are kept for parity with the original Java schema
 // (Flyway migrations V5/V6); the application does not use them.
 export const categories = pgTable('categories', {

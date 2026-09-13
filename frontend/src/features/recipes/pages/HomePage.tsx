@@ -32,7 +32,10 @@ export default function HomePage() {
       toast.success({ title: 'Recipe deleted', description: 'The notebook has been updated.' });
     },
     onError: (error) => {
-      toast.error({ title: 'Failed to delete', description: errorMessage(error) });
+      toast.error({
+        title: 'Failed to delete',
+        description: errorMessage(error, "You cannot delete another user's recipes."),
+      });
     },
   });
 

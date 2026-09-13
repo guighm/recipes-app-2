@@ -6,6 +6,8 @@ import { Link, useLocation, useNavigate } from 'react-router';
 import { useAuthStore } from '../stores/auth';
 import type { LoginDTO } from '../types/user';
 import { ApiError } from '@/core/config/api';
+import { EMAIL_MAX_LENGTH } from '@/core/validation/email';
+import { PASSWORD_MAX_LENGTH } from '@/core/validation/password';
 import Asterisk from '@/core/components/Asterisk';
 import { TextField } from '@/core/components/ui/Field';
 import { Button } from '@/core/components/ui/Button';
@@ -58,6 +60,7 @@ export default function LoginForm() {
           type="email"
           placeholder="you@email.com"
           required
+          maxLength={EMAIL_MAX_LENGTH}
           registration={register('email')}
           error={errors.email?.message}
         />
@@ -66,6 +69,7 @@ export default function LoginForm() {
           type="password"
           placeholder="Your password"
           required
+          maxLength={PASSWORD_MAX_LENGTH}
           registration={register('password')}
           error={errors.password?.message}
         />
