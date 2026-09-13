@@ -1,18 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UserDto {
-  @ApiProperty()
+  @ApiProperty({ example: 1 })
   id!: number;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'Jane Doe' })
   name!: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'jane.doe@email.com' })
   email!: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'https://example.com/avatars/jane.png' })
   avatarUrl!: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: '2026-01-15T12:00:00.000Z' })
   createdAt!: Date;
 }

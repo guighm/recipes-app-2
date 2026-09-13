@@ -1,7 +1,13 @@
 import { Body, Controller, Get, HttpCode, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CurrentUser } from '../common/decorators/current-user.decorator.js';
 import { Public } from '../common/decorators/public.decorator.js';
+import { ErrorResponseDto } from '../common/dto/error-response.dto.js';
 import type { AuthUser } from '../common/request-with-user.js';
 import { AuthService } from './auth.service.js';
 import { JwtDto } from './dto/jwt.dto.js';
@@ -16,11 +22,31 @@ export class AuthController {
   @Public()
   @Post('login')
   @HttpCode(200)
+  @ApiOperation({ summary: 'Sign in with e-mail and password' })
+  @ApiResponse({ status: 200, description: 'Login succeeded', type: JwtDto })
+  @ApiResponse({
+    status: 401,
+    description: 'Invalid e-mail or password',
+    type: ErrorResponseDto,
+  })
   async login(@Body() dto: LoginDto): Promise<JwtDto> {
     return this.authService.login(dto);
   }
 
   @Get('me')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get the currently authenticated user' })
+  @ApiResponse({ status: 200, description: 'Current user', type: UserDto })
+  @ApiResponse({
+    status: 401,
+    description: 'Missing or invalid access token',
+    type: ErrorResponseDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'The user from the token no longer exists',
+    type: ErrorResponseDto,
+  })
   async me(@CurrentUser() user: AuthUser): Promise<UserDto> {
     return this.authService.me(user);
   }

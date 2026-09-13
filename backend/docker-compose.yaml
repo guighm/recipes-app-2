@@ -5,16 +5,57 @@ volumes:
   recipes_app_data: {}
 
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: recipes_app_2
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_URL: postgres://${DB_USERNAME:?DB_USERNAME is required}:${DB_PASSWORD:?DB_PASSWORD is required}@db:5432/recipes_app
+      DB_USERNAME: ${DB_USERNAME:?DB_USERNAME is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      PORT: ${PORT:-3000}
+      ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:5173}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-72000000}
+      JWT_ISSUER: ${JWT_ISSUER:-recipes-app-api}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - recipes_app
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:3000}
+    image: recipes_app_2_frontend
+    ports:
+      - '5173:80'
+    depends_on:
+      - app
+    networks:
+      - recipes_app
+
   db:
     image: postgres:17
     ports:
       - '5432:5432'
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: 123
+      POSTGRES_USER: ${DB_USERNAME:?DB_USERNAME is required}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
       POSTGRES_DB: recipes_app
     volumes:
       - recipes_app_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ 'CMD-SHELL', 'pg_isready -U ${DB_USERNAME:-root} -d recipes_app' ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     networks:
       - recipes_app
 
