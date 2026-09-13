@@ -16,13 +16,20 @@ export function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
 }
 
+export function resolveAssetUrl(path: string): string {
+  if (/^https?:\/\//.test(path)) {
+    return path;
+  }
+  return `${API_URL}${path}`;
+}
+
 export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
   const headers = new Headers(init.headers);
   const token = getToken();
   if (token) {
     headers.set('Authorization', `Bearer ${token}`);
   }
-  if (init.body) {
+  if (init.body && !(init.body instanceof FormData)) {
     headers.set('Content-Type', 'application/json');
   }
 

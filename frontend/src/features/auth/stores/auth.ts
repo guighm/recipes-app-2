@@ -8,6 +8,7 @@ interface AuthState {
   login: (dto: LoginDTO) => Promise<void>;
   logout: () => void;
   fetchCurrentUser: () => Promise<void>;
+  setUser: (user: UserDTO) => void;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -37,6 +38,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       }
     }
   },
+  setUser: (user) => set({ user }),
 }));
 
 export const useIsAuthenticated = () => useAuthStore((state) => state.token !== null);

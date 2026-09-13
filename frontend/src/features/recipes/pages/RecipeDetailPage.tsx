@@ -25,14 +25,18 @@ interface StepFormValues {
   description: string;
 }
 
+const INGREDIENT_NAME_MAX_LENGTH = 255;
+const INGREDIENT_QUANTITY_MAX_LENGTH = 255;
+const STEP_DESCRIPTION_MAX_LENGTH = 2000;
+
 const ingredientSchema = z.object({
-  name: z.string().min(1, 'This field is required.'),
-  quantity: z.string().min(1, 'This field is required.'),
+  name: z.string().min(1, 'This field is required.').max(INGREDIENT_NAME_MAX_LENGTH),
+  quantity: z.string().min(1, 'This field is required.').max(INGREDIENT_QUANTITY_MAX_LENGTH),
 });
 
 const stepSchema = z.object({
   stepNumber: z.number({ message: 'This field is required.' }).int('This field is required.').min(1, 'This field is required.'),
-  description: z.string().min(1, 'This field is required.'),
+  description: z.string().min(1, 'This field is required.').max(STEP_DESCRIPTION_MAX_LENGTH),
 });
 
 const sectionClasses = 'rounded-xl border border-border bg-white px-[1.7rem] pt-[1.6rem] pb-[1.7rem] shadow-card';
@@ -233,6 +237,7 @@ export default function RecipeDetailPage() {
                     label="Name"
                     placeholder="Name"
                     required
+                    maxLength={INGREDIENT_NAME_MAX_LENGTH}
                     registration={ingredientForm.register('name')}
                     error={ingredientForm.formState.errors.name?.message}
                   />
@@ -240,6 +245,7 @@ export default function RecipeDetailPage() {
                     label="Quantity"
                     placeholder="Quantity"
                     required
+                    maxLength={INGREDIENT_QUANTITY_MAX_LENGTH}
                     registration={ingredientForm.register('quantity')}
                     error={ingredientForm.formState.errors.quantity?.message}
                   />
@@ -309,6 +315,7 @@ export default function RecipeDetailPage() {
                     label="Description"
                     placeholder="Description"
                     required
+                    maxLength={STEP_DESCRIPTION_MAX_LENGTH}
                     registration={stepForm.register('description')}
                     error={stepForm.formState.errors.description?.message}
                   />

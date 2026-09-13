@@ -12,13 +12,18 @@ import { z } from 'zod';
 import type { CreateRecipeDTO } from '../types/recipe';
 import { Button } from '@/core/components/ui/Button';
 
+const TITLE_MAX_LENGTH = 255;
+const DESCRIPTION_MAX_LENGTH = 2000;
+const DIFFICULTY_MAX_LENGTH = 255;
+const IMAGE_URL_MAX_LENGTH = 255;
+
 const createRecipeSchema = z.object({
-  title: z.string().min(1, 'This field is required.'),
-  description: z.string().min(1, 'This field is required.'),
+  title: z.string().min(1, 'This field is required.').max(TITLE_MAX_LENGTH),
+  description: z.string().min(1, 'This field is required.').max(DESCRIPTION_MAX_LENGTH),
   preparationTime: z.number({ message: 'This field is required.' }).int('This field is required.').min(1, 'This field is required.'),
   servings: z.number({ message: 'This field is required.' }).int('This field is required.').min(1, 'This field is required.'),
-  difficulty: z.string().min(1, 'This field is required.'),
-  imageUrl: z.string().min(1, 'This field is required.'),
+  difficulty: z.string().min(1, 'This field is required.').max(DIFFICULTY_MAX_LENGTH),
+  imageUrl: z.string().min(1, 'This field is required.').max(IMAGE_URL_MAX_LENGTH),
 });
 
 export default function CreateRecipeForm() {
@@ -79,6 +84,7 @@ export default function CreateRecipeForm() {
           label="Title"
           placeholder="E.g. Grandma's carrot cake"
           required
+          maxLength={TITLE_MAX_LENGTH}
           className="col-span-full"
           registration={register('title')}
           error={errors.title?.message}
@@ -87,6 +93,7 @@ export default function CreateRecipeForm() {
           label="Description"
           placeholder="One sentence about the dish"
           required
+          maxLength={DESCRIPTION_MAX_LENGTH}
           className="col-span-full"
           registration={register('description')}
           error={errors.description?.message}
@@ -111,6 +118,7 @@ export default function CreateRecipeForm() {
           label="Difficulty"
           placeholder="E.g. Easy"
           required
+          maxLength={DIFFICULTY_MAX_LENGTH}
           registration={register('difficulty')}
           error={errors.difficulty?.message}
         />
@@ -118,6 +126,7 @@ export default function CreateRecipeForm() {
           label="Photo URL"
           placeholder="https://…"
           required
+          maxLength={IMAGE_URL_MAX_LENGTH}
           registration={register('imageUrl')}
           error={errors.imageUrl?.message}
         />

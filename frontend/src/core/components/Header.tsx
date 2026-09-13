@@ -35,10 +35,10 @@ export default function Header() {
             </div>
           )}
           {isAuthenticated && user !== null && (
-            <div className="flex flex-col items-center">
+            <Link to="/account" className="group flex flex-col items-center no-underline">
               <Avatar user={user} />
-              <div aria-hidden="true" className="mt-1 h-0.5" />
-            </div>
+              <div aria-hidden="true" className={stripe} />
+            </Link>
           )}
         </nav>
       </div>

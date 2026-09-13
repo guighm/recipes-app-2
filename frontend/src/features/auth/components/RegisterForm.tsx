@@ -5,17 +5,35 @@ import { z } from 'zod';
 import { Link, useNavigate } from 'react-router';
 import type { RegisterDTO } from '../types/user';
 import { apiFetch, errorMessage } from '@/core/config/api';
+import { EMAIL_MAX_LENGTH, EMAIL_PATTERN } from '@/core/validation/email';
+import {
+  PASSWORD_MAX_LENGTH,
+  PASSWORD_MIN_LENGTH,
+  PASSWORD_PATTERN,
+  PASSWORD_PATTERN_MESSAGE,
+} from '@/core/validation/password';
 import Asterisk from '@/core/components/Asterisk';
 import { TextField } from '@/core/components/ui/Field';
 import { Button } from '@/core/components/ui/Button';
 import ErrorMessage from '@/core/components/ErrorMessage';
 
+const NAME_MAX_LENGTH = 255;
+const AVATAR_URL_MAX_LENGTH = 255;
+
 // Mirrors the backend's CreateUserDto: every field is required.
 const registerSchema = z.object({
-  name: z.string().min(1, 'This field is required.'),
-  email: z.string().min(1, 'This field is required.').email('Enter a valid e-mail.'),
-  password: z.string().min(6, 'Minimum of 6 characters.'),
-  avatarUrl: z.string().min(1, 'This field is required.'),
+  name: z.string().min(1, 'This field is required.').max(NAME_MAX_LENGTH),
+  email: z
+    .string()
+    .min(1, 'This field is required.')
+    .max(EMAIL_MAX_LENGTH)
+    .regex(EMAIL_PATTERN, 'Enter a valid e-mail.'),
+  password: z
+    .string()
+    .min(PASSWORD_MIN_LENGTH, `Minimum of ${PASSWORD_MIN_LENGTH} characters.`)
+    .max(PASSWORD_MAX_LENGTH)
+    .regex(PASSWORD_PATTERN, PASSWORD_PATTERN_MESSAGE),
+  avatarUrl: z.string().min(1, 'This field is required.').max(AVATAR_URL_MAX_LENGTH),
 });
 
 export default function RegisterForm() {
@@ -55,6 +73,7 @@ export default function RegisterForm() {
           label="Name"
           placeholder="Your name"
           required
+          maxLength={NAME_MAX_LENGTH}
           registration={register('name')}
           error={errors.name?.message}
         />
@@ -63,14 +82,16 @@ export default function RegisterForm() {
           type="email"
           placeholder="you@email.com"
           required
+          maxLength={EMAIL_MAX_LENGTH}
           registration={register('email')}
           error={errors.email?.message}
         />
         <TextField
           label="Password"
           type="password"
-          placeholder="Minimum of 6 characters"
+          placeholder={`Minimum of ${PASSWORD_MIN_LENGTH} characters, with upper/lowercase, a number and a symbol`}
           required
+          maxLength={PASSWORD_MAX_LENGTH}
           registration={register('password')}
           error={errors.password?.message}
         />
@@ -78,6 +99,7 @@ export default function RegisterForm() {
           label="Avatar URL"
           placeholder="https://…"
           required
+          maxLength={AVATAR_URL_MAX_LENGTH}
           registration={register('avatarUrl')}
           error={errors.avatarUrl?.message}
         />

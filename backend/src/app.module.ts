@@ -10,6 +10,7 @@ import { UsersModule } from './users/users.module.js';
 import { RecipesModule } from './recipes/recipes.module.js';
 import { IngredientsModule } from './ingredients/ingredients.module.js';
 import { StepsModule } from './steps/steps.module.js';
+import { FriendsModule } from './friends/friends.module.js';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { StepsModule } from './steps/steps.module.js';
     RecipesModule,
     IngredientsModule,
     StepsModule,
+    FriendsModule,
   ],
   controllers: [AppController],
   providers: [
