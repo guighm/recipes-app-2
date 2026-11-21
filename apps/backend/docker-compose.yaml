@@ -34,8 +34,9 @@ services:
       args:
         VITE_API_URL: ${VITE_API_URL:-http://localhost:3000}
     image: recipes_app_2_frontend
+    # nginx-unprivileged escuta em 8080 (nginx.conf do frontend), não em 80
     ports:
-      - '5173:80'
+      - '5173:8080'
     depends_on:
       - app
     networks:

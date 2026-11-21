@@ -11,7 +11,9 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  // 5173 é a origem esperada no ALLOWED_ORIGIN do backend;
+  // a 3000 já é usada pela própria API.
   server: {
-    port: 3000
+    port: 5173
   }
 })

@@ -1,0 +1,30 @@
+# Sobe apenas o frontend (SPA React + Vite servida pelo nginx-unprivileged).
+# Backend e Postgres ficam no apps/backend/docker-compose.yaml, que também
+# builda este mesmo Dockerfile e é a forma recomendada de subir a stack toda.
+#
+name: recipes_app_2_frontend
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # VITE_API_URL é embutido no bundle em tempo de build (ver Dockerfile):
+        # deve ser a URL visível ao navegador do host, não um hostname interno
+        # de rede Docker.
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:3000}
+    image: recipes_app_2_frontend
+    # Volta sozinho após queda do daemon ou reboot do host (a menos que
+    # seja parado explicitamente com `docker compose stop/down`)
+    restart: unless-stopped
+    # Hardening: impede escalada de privilégios dentro do container.
+    # Custo zero aqui — a imagem nginx-unprivileged já roda como usuário
+    # comum (uid 101) e não executa nada que precise de root.
+    security_opt:
+      - no-new-privileges:true
+    # nginx-unprivileged escuta em 8080 (nginx.conf e EXPOSE do Dockerfile),
+    # não em 80. O host usa 5173, mesma origem do dev server e do
+    # ALLOWED_ORIGIN do backend.
+    ports:
+      - '5173:8080'
