@@ -1,5 +1,5 @@
 # Sobe apenas o frontend (SPA React + Vite servida pelo nginx-unprivileged).
-# Backend e Postgres ficam no apps/backend/docker-compose.yaml, que também
+# Backend e Postgres ficam no apps/backend/compose.yaml, que também
 # builda este mesmo Dockerfile e é a forma recomendada de subir a stack toda.
 #
 name: recipes_app_2_frontend

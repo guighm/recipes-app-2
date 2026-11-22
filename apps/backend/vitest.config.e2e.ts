@@ -11,7 +11,7 @@ export default defineConfig({
     // one file's TRUNCATE racing another file's inserts.
     fileParallelism: false,
     env: {
-      // Points to the ephemeral db-test container (docker-compose.yaml, port 5433)
+      // Points to the ephemeral db-test container (compose.yaml, port 5433)
       DATABASE_URL: 'postgres://root:123@localhost:5433/recipes_app_test',
     },
   },

@@ -75,7 +75,7 @@ src/
 docker compose up --build          # só o frontend (5173 → nginx na 8080)
 ```
 
-Para subir a **stack completa** (frontend + backend + Postgres), use `apps/backend/docker-compose.yaml`, que builda este mesmo Dockerfile.
+Para subir a **stack completa** (frontend + backend + Postgres), use `apps/backend/compose.yaml`, que builda este mesmo Dockerfile.
 
 - Multi-stage: build com `node:24-alpine` + pnpm (corepack, `pnpm fetch` para cache), servido por `nginxinc/nginx-unprivileged:1.28-alpine` na porta **8080**, com healthcheck.
 - A imagem já roda como usuário comum (uid 101) e `no-new-privileges` está habilitado — **preserve esse hardening** ao alterar o `Dockerfile` ou o `compose.yaml`.

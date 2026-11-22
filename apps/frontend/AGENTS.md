@@ -58,5 +58,5 @@ Tailwind CSS v4 com tema definido via `@theme` em `src/app/globals.css` ("tile n
 ## Docker
 
 - `Dockerfile`: multi-stage — build com node:24-alpine + pnpm (via corepack, `pnpm fetch` para cache de camadas), servido por `nginxinc/nginx-unprivileged:1.28-alpine` na porta **8080**, com healthcheck.
-- `compose.yaml` sobe só o frontend na 5173→8080; para subir a stack completa (backend + Postgres juntos), use `apps/backend/docker-compose.yaml`, que também builda este Dockerfile.
+- `compose.yaml` sobe só o frontend na 5173→8080; para subir a stack completa (backend + Postgres juntos), use `apps/backend/compose.yaml`, que também builda este Dockerfile.
 - A imagem já roda como usuário comum (uid 101); `no-new-privileges` está habilitado — preserve esse hardening.

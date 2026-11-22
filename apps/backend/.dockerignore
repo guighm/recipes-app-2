@@ -1,3 +1,63 @@
+# dependencies
 node_modules
+
+# compiled output
 dist
+*.tsbuildinfo
+.swc/
+
+# secrets
 .env
+.env.*
+!.env.example
+*.local
+
+# user-uploaded files (served at /uploads by main.ts; volume-mounted at runtime)
+uploads
+
+# logs
+*.log
+
+# tests (not needed inside the image; run via vitest on the host)
+test
+coverage
+**/*.spec.ts
+vitest.config.ts
+vitest.config.e2e.ts
+
+# tooling configs (CLI only — oxlint/prettier/drizzle-kit, not used by build or runtime)
+oxlint.json
+.prettierrc
+drizzle.config.ts
+
+# NOTE: drizzle/ (SQL migrations) is deliberately NOT ignored — the
+# Dockerfile copies it from the build stage and migrations run on
+# container startup via DatabaseModule. Same for nest-cli.json and
+# tsconfig(-build).json, which `nest build` requires.
+
+# repo/meta files
+.git
+.gitignore
+Dockerfile
+.dockerignore
+docker-compose.yaml
+compose.yaml
+README.md
+AGENTS.md
+
+# editors / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# temp / runtime data
+.temp/
+.tmp/
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Node.js diagnostic reports
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
