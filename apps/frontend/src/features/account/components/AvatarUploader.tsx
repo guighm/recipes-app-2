@@ -54,7 +54,7 @@ export default function AvatarUploader({ user }: { user: UserDTO }) {
   const displayUrl = previewUrl ?? resolveAssetUrl(user.avatarUrl);
 
   return (
-    <section className="flex flex-col gap-[1.1rem] rounded-xl border border-border bg-white px-[1.8rem] py-[1.6rem] shadow-card">
+    <section className="flex flex-col gap-[1.1rem] rounded-xl border border-border bg-surface px-[1.8rem] py-[1.6rem] shadow-card">
       <h2 className="text-[1.3rem]">Profile picture</h2>
       <div className="flex items-center gap-[1.2rem]">
         <button
@@ -64,7 +64,7 @@ export default function AvatarUploader({ user }: { user: UserDTO }) {
           className="group relative h-20 w-20 shrink-0 cursor-pointer overflow-hidden rounded-full border border-border disabled:cursor-not-allowed"
         >
           <img src={displayUrl} alt={user.name} className="h-full w-full object-cover" />
-          <span className="absolute inset-0 flex items-center justify-center bg-black/40 text-center text-[0.65rem] font-semibold text-white opacity-0 transition-opacity group-hover:opacity-100">
+          <span className="absolute inset-0 flex items-center justify-center bg-scrim/45 text-center text-[0.65rem] font-semibold text-white opacity-0 transition-opacity group-hover:opacity-100">
             {uploadMutation.isPending ? 'Uploading…' : 'Change'}
           </span>
         </button>

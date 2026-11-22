@@ -64,7 +64,7 @@ export default function CreateRecipeForm() {
   };
 
   return (
-    <section className="mx-auto flex w-[min(560px,100%)] flex-col gap-[1.3rem] rounded-xl border border-border bg-white px-[2.2rem] py-8 shadow-card">
+    <section className="mx-auto flex w-[min(560px,100%)] flex-col gap-[1.3rem] rounded-xl border border-border bg-surface px-[2.2rem] py-8 shadow-card">
       <h2 className="text-[1.65rem]">New recipe</h2>
       <p className="mt-[-0.6rem] text-[0.8rem] text-ink-soft">
         Fill in the dish's details. Required fields are marked (<Asterisk />)
@@ -76,7 +76,7 @@ export default function CreateRecipeForm() {
             src={imageUrl}
             alt="Recipe photo preview"
           />
-          <figcaption className="label text-center text-[0.66rem] text-ink-soft">Photo preview</figcaption>
+          <figcaption className="label text-2xs text-center text-ink-soft">Photo preview</figcaption>
         </figure>
       )}
       <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-2 items-start gap-[1.1rem] max-[480px]:grid-cols-1">

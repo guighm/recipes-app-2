@@ -38,12 +38,12 @@ export function Toaster({ timeout = 5000, limit = 3, children }: ToasterProps) {
 }
 
 const contentClasses =
-  'pointer-events-auto rounded-xl border-[1.5px] bg-white p-[0.9rem] shadow-card-lifted transition-[opacity,transform,translate] duration-200 data-[ending-style]:opacity-0 data-[ending-style]:translate-y-2 data-[starting-style]:translate-y-2 data-[starting-style]:opacity-0 data-[limited]:opacity-0 data-[type=error]:border-error data-[type=error]:bg-error-mist data-[type=success]:border-cobalt data-[type=info]:border-butter';
+  'pointer-events-auto rounded-xl border-[1.5px] bg-surface p-[0.9rem] shadow-card-lifted transition-[opacity,transform,translate] duration-200 data-[ending-style]:opacity-0 data-[ending-style]:translate-y-2 data-[starting-style]:translate-y-2 data-[starting-style]:opacity-0 data-[limited]:opacity-0 data-[type=error]:border-error data-[type=error]:bg-error-mist data-[type=success]:border-lapis data-[type=info]:border-butter';
 
-const titleClasses = 'font-display text-[1.02rem] leading-tight text-cobalt-ink';
+const titleClasses = 'font-display text-[1.02rem] leading-tight text-ink-strong';
 
 const iconColors: Record<ToastType, string> = {
-  success: 'border-cobalt text-cobalt',
+  success: 'border-lapis text-lapis',
   error: 'border-error bg-error-mist text-error',
   info: 'border-butter text-ink',
 };

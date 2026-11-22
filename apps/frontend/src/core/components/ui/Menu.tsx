@@ -37,7 +37,7 @@ export function Menu({ label, items, variant = 'quiet', align = 'end' }: MenuPro
       <BaseMenu.Trigger render={<Button variant={variant}>{label}</Button>} />
       <BaseMenu.Portal>
         <BaseMenu.Positioner align={align} sideOffset={6} className="z-50">
-          <BaseMenu.Popup className="min-w-44 rounded-lg border border-border bg-white p-1 shadow-card-lifted outline-none transition-opacity duration-150 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0">
+          <BaseMenu.Popup className="min-w-44 rounded-lg border border-border bg-surface p-1 shadow-card-lifted outline-none transition-opacity duration-150 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0">
             {items.map((option) => (
               <Fragment key={option.label}>
                 {option.separatorBefore && <BaseMenu.Separator className="mx-1 my-1 border-t border-border" />}

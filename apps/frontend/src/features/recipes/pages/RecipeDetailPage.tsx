@@ -39,7 +39,7 @@ const stepSchema = z.object({
   description: z.string().min(1, 'This field is required.').max(STEP_DESCRIPTION_MAX_LENGTH),
 });
 
-const sectionClasses = 'rounded-xl border border-border bg-white px-[1.7rem] pt-[1.6rem] pb-[1.7rem] shadow-card';
+const sectionClasses = 'rounded-xl border border-border bg-surface px-[1.7rem] pt-[1.6rem] pb-[1.7rem] shadow-card';
 
 export default function RecipeDetailPage() {
   const { id } = useParams();
@@ -130,7 +130,7 @@ export default function RecipeDetailPage() {
       <div className="page mt-12 flex flex-col items-start gap-[1.2rem]">
         <p className="text-[1.05rem] text-ink-soft">
           Sign in to view the recipe.{' '}
-          <Link to="/login" className="font-semibold text-cobalt">Sign in</Link>
+          <Link to="/login" className="font-semibold text-lapis">Sign in</Link>
         </p>
       </div>
     );
@@ -163,16 +163,16 @@ export default function RecipeDetailPage() {
               <p className="mt-2.5 text-ink-soft">{recipe.description}</p>
               <dl className="mt-[1.4rem] flex flex-wrap gap-x-8 gap-y-4">
                 <div>
-                  <dt className="label text-[0.66rem] font-medium text-ink-soft">Preparation time</dt>
-                  <dd className="text-[1.1rem] font-semibold text-cobalt-ink">{recipe.preparationTime} min</dd>
+                  <dt className="label text-2xs font-medium text-ink-soft">Preparation time</dt>
+                  <dd className="text-[1.1rem] font-semibold text-ink-strong">{recipe.preparationTime} min</dd>
                 </div>
                 <div>
-                  <dt className="label text-[0.66rem] font-medium text-ink-soft">Servings</dt>
-                  <dd className="text-[1.1rem] font-semibold text-cobalt-ink">{recipe.servings}</dd>
+                  <dt className="label text-2xs font-medium text-ink-soft">Servings</dt>
+                  <dd className="text-[1.1rem] font-semibold text-ink-strong">{recipe.servings}</dd>
                 </div>
                 <div>
-                  <dt className="label text-[0.66rem] font-medium text-ink-soft">Difficulty</dt>
-                  <dd className="text-[1.1rem] font-semibold text-cobalt-ink">{recipe.difficulty}</dd>
+                  <dt className="label text-2xs font-medium text-ink-soft">Difficulty</dt>
+                  <dd className="text-[1.1rem] font-semibold text-ink-strong">{recipe.difficulty}</dd>
                 </div>
               </dl>
               <Link to="/" className="mt-[1.6rem] inline-block text-[0.9rem] font-semibold no-underline hover:underline">
@@ -261,7 +261,7 @@ export default function RecipeDetailPage() {
                     <li key={step.id} className="flex gap-4">
                       <span
                         aria-hidden="true"
-                        className="grid size-[2.2rem] shrink-0 place-items-center rounded-md border-[1.5px] border-cobalt bg-white font-mono text-[0.95rem] font-medium text-cobalt shadow-[inset_0_0_0_3px_var(--color-white),inset_0_0_0_4px_var(--color-cobalt-mist)]"
+                        className="grid size-[2.2rem] shrink-0 place-items-center rounded-md border-[1.5px] border-lapis bg-surface font-mono text-[0.95rem] font-medium text-lapis shadow-[inset_0_0_0_3px_var(--color-surface),inset_0_0_0_4px_var(--color-cobalt-mist)]"
                       >
                         {step.stepNumber}
                       </span>

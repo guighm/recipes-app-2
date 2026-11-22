@@ -70,7 +70,7 @@ export default function PasswordForm() {
   };
 
   return (
-    <section className="flex flex-col gap-[1.1rem] rounded-xl border border-border bg-white px-[1.8rem] py-[1.6rem] shadow-card">
+    <section className="flex flex-col gap-[1.1rem] rounded-xl border border-border bg-surface px-[1.8rem] py-[1.6rem] shadow-card">
       <h2 className="text-[1.3rem]">Password</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-[1.1rem]">
         <TextField

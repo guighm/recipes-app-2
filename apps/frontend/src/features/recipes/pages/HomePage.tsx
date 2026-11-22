@@ -94,7 +94,7 @@ export default function HomePage() {
           {recipes.map((recipe) => (
             <article
               key={recipe.id}
-              className="group flex flex-col overflow-hidden rounded-xl border border-border bg-white shadow-card transition-[box-shadow,transform] duration-250 ease-in-out hover:-translate-y-0.75 hover:shadow-card-lifted"
+              className="group flex flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-card transition-[box-shadow,transform] duration-250 ease-in-out hover:-translate-y-0.75 hover:shadow-card-lifted"
             >
               <div className="aspect-16/10 overflow-hidden border-b border-border bg-cobalt-mist">
                 <img
@@ -104,11 +104,11 @@ export default function HomePage() {
                 />
               </div>
               <div className="flex flex-1 flex-col gap-[0.55rem] px-[1.2rem] pt-[1.1rem] pb-[1.3rem]">
-                <p className="label self-start rounded-sm border border-cobalt px-2 py-[0.15rem] text-[0.66rem] font-medium text-cobalt">
+                <p className="label text-2xs self-start rounded-sm border border-lapis px-2 py-[0.15rem] font-medium text-lapis">
                   {recipe.difficulty}
                 </p>
                 <h3 className="text-[1.3rem]">
-                  <Link to={`/recipe/${recipe.id}`} className="text-inherit no-underline hover:text-cobalt hover:underline">
+                  <Link to={`/recipe/${recipe.id}`} className="text-inherit no-underline hover:text-lapis hover:underline">
                     {recipe.title}
                   </Link>
                 </h3>

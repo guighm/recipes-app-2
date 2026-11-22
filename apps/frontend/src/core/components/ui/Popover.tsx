@@ -22,7 +22,7 @@ export function Popover({ children, content, title }: PopoverProps) {
       <BasePopover.Trigger render={children as never} />
       <BasePopover.Portal>
         <BasePopover.Positioner side="bottom" align="start" sideOffset={6} className="z-50">
-          <BasePopover.Popup className="w-max max-w-80 rounded-lg border border-border bg-white p-4 text-[0.92rem] shadow-card-lifted outline-none transition-[opacity,transform] duration-150 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0">
+          <BasePopover.Popup className="w-max max-w-80 rounded-lg border border-border bg-surface p-4 text-[0.92rem] shadow-card-lifted outline-none transition-[opacity,transform] duration-150 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0">
             {title && <BasePopover.Title className="text-[1.05rem] font-semibold">{title}</BasePopover.Title>}
             {typeof content === 'function' ? content(close) : content}
           </BasePopover.Popup>

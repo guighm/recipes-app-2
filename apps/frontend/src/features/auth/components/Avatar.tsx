@@ -28,7 +28,7 @@ export default function Avatar({ user }: { user: UserDTO }) {
       ) : (
         <span
           aria-hidden="true"
-          className={`${initialsSize} inline-flex items-center justify-center rounded-full bg-cobalt-mist font-display font-semibold text-cobalt-ink`}
+          className={`${initialsSize} inline-flex items-center justify-center rounded-full bg-cobalt-mist font-display font-semibold text-ink-strong`}
         >
           {initials(user.name)}
         </span>

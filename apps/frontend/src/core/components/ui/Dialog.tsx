@@ -4,11 +4,11 @@ import { cx } from './cx';
 
 /** Darkened backdrop behind the modal — shared with the AlertDialog. */
 export const backdropClasses =
-  'fixed inset-0 z-50 bg-ink/45 transition-opacity duration-200 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0';
+  'fixed inset-0 z-50 bg-scrim/45 transition-opacity duration-200 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0';
 
 /** Modal box — shared with the AlertDialog. Width is set by the caller. */
 export const popupClasses =
-  'fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 rounded-xl border border-border bg-white p-6 shadow-card-lifted transition-[opacity,transform] duration-200 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0';
+  'fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 rounded-xl border border-border bg-surface p-6 shadow-card-lifted transition-[opacity,transform] duration-200 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0';
 
 interface DialogProps {
   open: boolean;

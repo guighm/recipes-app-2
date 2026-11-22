@@ -43,7 +43,7 @@ export function SwitchField({
           defaultChecked={defaultChecked}
           onCheckedChange={onCheckedChange}
           required={required}
-          className="flex h-[1.35rem] w-[2.4rem] shrink-0 items-center rounded-full border-[1.5px] border-border bg-porcelain p-[0.15rem] outline-none transition-colors duration-150 focus-visible:border-cobalt focus-visible:shadow-[0_0_0_3px_var(--color-cobalt-mist)] data-[checked]:border-cobalt data-[checked]:bg-cobalt disabled:cursor-not-allowed disabled:opacity-45"
+          className="flex h-[1.35rem] w-[2.4rem] shrink-0 items-center rounded-full border-[1.5px] border-border bg-porcelain p-[0.15rem] outline-none transition-colors duration-150 focus-visible:border-lapis focus-visible:shadow-focus data-[checked]:border-lapis data-[checked]:bg-cobalt disabled:cursor-not-allowed disabled:opacity-45"
         >
           <Switch.Thumb className="size-[1rem] rounded-full bg-white shadow-card transition-transform duration-150 data-[checked]:translate-x-[1rem]" />
         </Switch.Root>

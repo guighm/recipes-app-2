@@ -3,28 +3,66 @@
 
 /* ---------- "Tile notebook" theme ---------- */
 
+/*
+ * Paleta em uma só definição: cada token de cor é declarado com a função
+ * nativa `light-dark()`, e o valor efetivo depende do `color-scheme` do
+ * elemento — resolvido adiante, em `@layer base`. O tema escuro é derivado
+ * dos mesmos tokens do claro (não há um segundo bloco de paleta); classes
+ * utilitárias continuam idênticas nos dois modos. Requer `light-dark()`
+ * (Baseline desde meados de 2024) e `color-mix()` para os modificadores de
+ * opacidade (ex.: `bg-scrim/45`).
+ *
+ * Tokens com papel duplo foram separados para que o escuro fique legível
+ * sem quebrar componentes:
+ *   - `surface`   — fundo dos cards/superfícies (antes `bg-white`). `white`
+ *                   segue literal, para texto/traço sobre pigmentos sólidos
+ *                   (check do checkbox, thumb do switch, Tooltip).
+ *   - `lapis`     — azul de texto, contorno e indicadores sobre fundos claros
+ *                   (links, foco, tags). `cobalt` é o pigmento SÓLIDO que
+ *                   carrega texto `white` (fundo de botão, tracks, hover).
+ *   - `ink-strong`— texto de ênfase (títulos, valores). `cobalt-ink` é o
+ *                   pigmento profundo ESTÁTICO (fundo do Tooltip, hover do
+ *                   botão primário — precisa permanecer escuro no dark).
+ *   - `scrim`     — véu dos overlays (Dialog); escurece no dark em vez de
+ *                   inverter junto com `ink`.
+ */
 @theme {
     /* Typography */
     --font-display: "Fraunces", Georgia, serif;
     --font-body: "Plus Jakarta Sans", system-ui, sans-serif;
     --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 
-    /* Palette — porcelain and tile */
-    --color-porcelain: #FBFAF7;
-    --color-white: #FFFFFF;
-    --color-cobalt: #1D4E8F;
-    --color-cobalt-ink: #12355F;
-    --color-cobalt-mist: #E5ECF6;
-    --color-ink: #22283A;
-    --color-ink-soft: #5B6374;
-    --color-butter: #E9A93E;
-    --color-error: #B3321E;
-    --color-error-mist: #FBEAE6;
-    --color-border: #D9D6CD;
+    /* Extra size step for small labels (menor que o `text-xs` default). */
+    --text-2xs: 0.66rem;
 
-    /* Card shadows */
-    --shadow-card: 0 1px 2px rgba(34, 40, 58, 0.05), 0 10px 28px rgba(34, 40, 58, 0.07);
-    --shadow-card-lifted: 0 2px 4px rgba(34, 40, 58, 0.07), 0 14px 34px rgba(29, 78, 143, 0.13);
+    /* Palette — porcelain and tile */
+    --color-porcelain: light-dark(#FBFAF7, #14161D);
+    --color-white: #FFFFFF;
+    --color-surface: light-dark(#FFFFFF, #1E232C);
+    --color-cobalt: light-dark(#1D4E8F, #2E62A7);
+    --color-cobalt-ink: #12355F;
+    --color-cobalt-mist: light-dark(#E5ECF6, #26344A);
+    --color-lapis: light-dark(#1D4E8F, #8FB4E8);
+    --color-ink: light-dark(#22283A, #E5E8F0);
+    --color-ink-strong: light-dark(#12355F, #C9D6EA);
+    --color-ink-soft: light-dark(#5B6374, #A5ADBF);
+    --color-ink-faint: light-dark(#A6AAB6, #6A7284);
+    --color-butter: light-dark(#E9A93E, #EDB45B);
+    --color-error: light-dark(#B3321E, #F49882);
+    --color-error-mist: light-dark(#FBEAE6, #3A2320);
+    --color-border: light-dark(#D9D6CD, #2E333D);
+    --color-scrim: light-dark(#22283A, #0A0D14);
+
+    /* Card shadows (cor por stop — `light-dark()` só recebe cores). */
+    --shadow-card:
+        0 1px 2px light-dark(rgba(34, 40, 58, 0.05), rgba(0, 0, 0, 0.4)),
+        0 10px 28px light-dark(rgba(34, 40, 58, 0.07), rgba(0, 0, 0, 0.5));
+    --shadow-card-lifted:
+        0 2px 4px light-dark(rgba(34, 40, 58, 0.07), rgba(0, 0, 0, 0.45)),
+        0 14px 34px light-dark(rgba(29, 78, 143, 0.13), rgba(0, 0, 0, 0.6));
+
+    /* Focus ring dos form controls (Input, Select, Checkbox, Switch). */
+    --shadow-focus: 0 0 0 3px var(--color-cobalt-mist);
 
     /* Page entrance */
     --animate-rise: rise 0.45s ease-out both;
@@ -42,6 +80,30 @@
 }
 
 @layer base {
+    /*
+     * Seletor de tema: o modo segue a preferência do sistema e pode ser
+     * forçado com uma classe no <html> (`.dark` ou `.light`, ex. por um
+     * toggle futuro). Nenhuma classe = tema automático.
+     *
+     * O tema NÃO usa a variante `dark:` do Tailwind — o default dela consulta
+     * `prefers-color-scheme` e ignoraria as classes que forçam o modo. É por
+     * isso que o escuro vive inteiro nos tokens (`light-dark()`), mantendo as
+     * classes utilitárias idênticas nos dois modos.
+     */
+    :root {
+        color-scheme: light;
+    }
+
+    .dark {
+        color-scheme: dark;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        :root:not(.light) {
+            color-scheme: dark;
+        }
+    }
+
     body {
         background-color: var(--color-porcelain);
         color: var(--color-ink);
@@ -55,11 +117,12 @@
         font-family: var(--font-display);
         font-weight: 600;
         line-height: 1.15;
-        color: var(--color-cobalt-ink);
+        text-wrap: balance;
+        color: var(--color-ink-strong);
     }
 
     a {
-        color: var(--color-cobalt);
+        color: var(--color-lapis);
     }
 
     img {
@@ -68,29 +131,17 @@
     }
 
     :focus-visible {
-        outline: 2px solid var(--color-cobalt);
+        outline: 2px solid var(--color-lapis);
         outline-offset: 2px;
     }
 
-    input {
-        font: inherit;
-        color: var(--color-ink);
-        background: var(--color-porcelain);
-        border: 1px solid var(--color-border);
-        border-radius: 0.5rem;
-        padding: 0.65rem 0.8rem;
-        width: 100%;
+    ::selection {
+        background-color: var(--color-cobalt-mist);
     }
 
-    input::placeholder {
-        color: #A6AAB6;
-    }
-
-    input:focus-visible {
-        outline: none;
-        border-color: var(--color-cobalt);
-        box-shadow: 0 0 0 3px var(--color-cobalt-mist);
-    }
+    /* Form controls não têm estilo no @layer base: o padrão do tema vive no
+       componente <Input> (controlClasses) e nos primitivos Checkbox/Switch —
+       utilitários Tailwind vencem a base, então estilos aqui seriam inertes. */
 
     @media (prefers-reduced-motion: reduce) {
 
@@ -111,12 +162,29 @@
     margin-inline: auto;
 }
 
-/* Tile frieze — cobalt diamond and butter dot. */
+/*
+ * Tile frieze — cobalt diamond and butter dot. Dois layers com `mask` para
+ * que cada forma pegue a cor de um token (o data URI não pode conter var()).
+ */
 @utility frieze {
+    position: relative;
     height: 14px;
-    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='14' viewBox='0 0 26 14'><path d='M7 2 12 7 7 12 2 7Z' fill='none' stroke='%231D4E8F' stroke-width='1.5'/><circle cx='19' cy='7' r='1.8' fill='%23E9A93E'/></svg>");
-    background-repeat: repeat-x;
-    background-position: top center;
+
+    &::before,
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-color: var(--color-lapis);
+        mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='14' viewBox='0 0 26 14'><path d='M7 2 12 7 7 12 2 7Z' fill='none' stroke='black' stroke-width='1.5'/></svg>");
+        mask-repeat: repeat-x;
+        mask-position: top center;
+    }
+
+    &::after {
+        background-color: var(--color-butter);
+        mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='14' viewBox='0 0 26 14'><circle cx='19' cy='7' r='1.8'/></svg>");
+    }
 }
 
 /* Label utility: mono, uppercase, letter-spaced. */

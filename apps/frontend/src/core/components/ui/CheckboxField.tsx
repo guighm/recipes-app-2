@@ -46,7 +46,7 @@ export function CheckboxField({
           defaultChecked={defaultChecked}
           onCheckedChange={onCheckedChange}
           required={required}
-          className="grid size-[1.15rem] shrink-0 place-items-center rounded-md border-[1.5px] border-border bg-porcelain outline-none transition-colors duration-150 focus-visible:border-cobalt focus-visible:shadow-[0_0_0_3px_var(--color-cobalt-mist)] data-[checked]:border-cobalt data-[checked]:bg-cobalt disabled:cursor-not-allowed disabled:opacity-45"
+          className="grid size-[1.15rem] shrink-0 place-items-center rounded-md border-[1.5px] border-border bg-porcelain outline-none transition-colors duration-150 focus-visible:border-lapis focus-visible:shadow-focus data-[checked]:border-lapis data-[checked]:bg-cobalt disabled:cursor-not-allowed disabled:opacity-45"
         >
           <Checkbox.Indicator className="text-white data-[unchecked]:hidden">
             <svg aria-hidden="true" viewBox="0 0 16 16" className="size-3 fill-none stroke-white stroke-2">

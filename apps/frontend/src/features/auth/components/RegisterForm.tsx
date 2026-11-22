@@ -61,7 +61,7 @@ export default function RegisterForm() {
   };
 
   return (
-    <section className="mx-auto flex w-[min(430px,100%)] flex-col gap-[1.3rem] rounded-xl border border-border bg-white px-[2.2rem] py-8 shadow-card">
+    <section className="mx-auto flex w-[min(430px,100%)] flex-col gap-[1.3rem] rounded-xl border border-border bg-surface px-[2.2rem] py-8 shadow-card">
       <h2 className="text-[1.65rem]">Create your account</h2>
       <p className="mt-[-0.6rem] text-[0.8rem] text-ink-soft">
         Required fields are marked (<Asterisk />)
@@ -106,7 +106,7 @@ export default function RegisterForm() {
         </Button>
         {apiError && <ErrorMessage message={apiError} />}
         <p className="mt-1.5 text-[0.95rem] text-ink-soft">
-          Already registered? <Link to="/login" className="font-semibold text-cobalt">Sign in</Link>
+          Already registered? <Link to="/login" className="font-semibold text-lapis">Sign in</Link>
         </p>
       </form>
     </section>
