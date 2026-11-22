@@ -1,3 +1,4 @@
+import { ArrowLeft } from "lucide-react";
 import { ButtonLink } from "../components/ui/Button";
 
 export default function NotFoundPage() {
@@ -11,6 +12,7 @@ export default function NotFoundPage() {
         The address you opened doesn't match any recipe in the notebook.
       </p>
       <ButtonLink to="/" variant="primary" className="mt-[1.2rem]">
+        <ArrowLeft aria-hidden="true" size={16} />
         Back to recipes
       </ButtonLink>
     </div>

@@ -1,5 +1,6 @@
 import { Checkbox } from '@base-ui/react/checkbox';
 import { Field } from '@base-ui/react/field';
+import { Check } from 'lucide-react';
 import Asterisk from '../Asterisk';
 import { errorClasses } from './Field';
 import { cx } from './cx';
@@ -49,9 +50,7 @@ export function CheckboxField({
           className="grid size-[1.15rem] shrink-0 place-items-center rounded-md border-[1.5px] border-border bg-porcelain outline-none transition-colors duration-150 focus-visible:border-lapis focus-visible:shadow-focus data-[checked]:border-lapis data-[checked]:bg-cobalt disabled:cursor-not-allowed disabled:opacity-45"
         >
           <Checkbox.Indicator className="text-white data-[unchecked]:hidden">
-            <svg aria-hidden="true" viewBox="0 0 16 16" className="size-3 fill-none stroke-white stroke-2">
-              <path d="m3 8.5 3.5 3.5L13 4.5" />
-            </svg>
+            <Check aria-hidden="true" size={12} strokeWidth={3} />
           </Checkbox.Indicator>
         </Checkbox.Root>
         <span>

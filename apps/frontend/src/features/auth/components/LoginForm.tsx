@@ -9,6 +9,7 @@ import { ApiError } from '@/core/config/api';
 import { EMAIL_MAX_LENGTH } from '@/core/validation/email';
 import { PASSWORD_MAX_LENGTH } from '@/core/validation/password';
 import Asterisk from '@/core/components/Asterisk';
+import { formCardClasses } from '@/core/components/ui/card';
 import { TextField } from '@/core/components/ui/Field';
 import { Button } from '@/core/components/ui/Button';
 import ErrorMessage from '@/core/components/ErrorMessage';
@@ -49,7 +50,7 @@ export default function LoginForm() {
   };
 
   return (
-    <section className="mx-auto flex w-[min(430px,100%)] flex-col gap-[1.3rem] rounded-xl border border-border bg-surface px-[2.2rem] py-8 shadow-card">
+    <section className={`mx-auto flex w-[min(430px,100%)] flex-col gap-[1.3rem] ${formCardClasses}`}>
       <h2 className="text-[1.65rem]">Sign in</h2>
       <p className="mt-[-0.6rem] text-[0.8rem] text-ink-soft">
         Required fields are marked (<Asterisk />)

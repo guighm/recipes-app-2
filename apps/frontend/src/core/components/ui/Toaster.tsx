@@ -1,4 +1,5 @@
 import { Toast } from '@base-ui/react/toast';
+import { Check, Info, TriangleAlert, type LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 export type ToastType = 'success' | 'error' | 'info';
@@ -48,19 +49,26 @@ const iconColors: Record<ToastType, string> = {
   info: 'border-butter text-ink',
 };
 
+const iconGlyphs: Record<ToastType, LucideIcon> = {
+  success: Check,
+  error: TriangleAlert,
+  info: Info,
+};
+
 function ToastList() {
   const { toasts } = Toast.useToastManager();
 
   return toasts.map((toast) => {
     const type = (toast.type ?? 'info') as ToastType;
+    const Glyph = iconGlyphs[type];
     return (
       <Toast.Root key={toast.id} toast={toast} className={contentClasses}>
         <Toast.Content className="flex items-start gap-2">
           <span
             aria-hidden="true"
-            className={`mt-[0.3rem] grid size-[1.35rem] shrink-0 place-items-center rounded-md border-[1.5px] font-mono text-[0.8rem] font-medium ${iconColors[type]}`}
+            className={`mt-[0.3rem] grid size-[1.35rem] shrink-0 place-items-center rounded-md border-[1.5px] ${iconColors[type]}`}
           >
-            {type === 'error' ? '!' : '✓'}
+            <Glyph size={14} strokeWidth={2.5} />
           </span>
           <div className="flex-1">
             <Toast.Title className={titleClasses}>{toast.title}</Toast.Title>

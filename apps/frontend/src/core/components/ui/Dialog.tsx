@@ -1,4 +1,5 @@
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
+import { X } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { cx } from './cx';
 
@@ -33,7 +34,13 @@ export function Dialog({ open, onOpenChange, title, description, children, foote
       <BaseDialog.Portal>
         <BaseDialog.Backdrop className={backdropClasses} />
         <BaseDialog.Popup className={cx('w-[min(30rem,100%-2rem)]', popupClasses, className)}>
-          <BaseDialog.Title className="text-[1.3rem]">{title}</BaseDialog.Title>
+          <BaseDialog.Close
+            aria-label="Close"
+            className="absolute right-4 top-4 grid size-8 cursor-pointer place-items-center rounded-md text-ink-faint outline-none transition-colors hover:bg-cobalt-mist hover:text-ink"
+          >
+            <X aria-hidden="true" size={16} />
+          </BaseDialog.Close>
+          <BaseDialog.Title className="pr-8 text-[1.3rem]">{title}</BaseDialog.Title>
           {description && (
             <BaseDialog.Description className="mt-2 text-[0.95rem] text-ink-soft">{description}</BaseDialog.Description>
           )}

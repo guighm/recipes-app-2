@@ -51,6 +51,16 @@ src/
 
 Tailwind CSS v4 com tema definido via `@theme` em `src/app/globals.css` ("tile notebook"), com **tema claro e escuro derivados do mesmo token**: cada cor é declarada uma única vez com CSS nativo `light-dark()`, e o modo é escolhido pelo `color-scheme` — segue a preferência do sistema por padrão, com classes `.dark`/`.light` no `<html>` para forçar. Use os tokens existentes — cores (`porcelain`, `surface` (fundo de cards) vs `white` (literal, para texto/traço sobre pigmentos sólidos), `cobalt` (sólidos: botão, tracks) vs `lapis` (texto/contorno de destaque), `cobalt-ink` (pigmento estático: Tooltip, hover primário) vs `ink-strong` (texto de ênfase), `cobalt-mist`, `scrim` (overlays), `ink`/`ink-soft`/`ink-faint`, `butter`, `error`/`error-mist`, `border`), fontes (`font-display`, `font-body`, `font-mono`), sombras (`shadow-card`, `shadow-card-lifted`) e animação (`--animate-rise`) — não hex/valores hardcoded. Fontes vêm de **Google Fonts via `@import` no próprio `globals.css`** (Fraunces, Plus Jakarta Sans, IBM Plex Mono) — dependência de rede em runtime. Há também três `@utility` custom: `page` (esqueleto de layout das páginas), `label` (mono, uppercase, letter-spaced) e `frieze` — use-as em vez de recriar os estilos. Em `@layer base`, `prefers-reduced-motion` desliga animações globalmente e headings usam `text-wrap: balance`. **Form controls não têm estilo no `@layer base`** — o padrão de input vive no `controlClasses` de `Input.tsx` (e Checkbox/Switch/Select têm classes próprias); use o `<Input>` de `core/components/ui/` em vez de `<input>` cru.
 
+## Ícones
+
+Todo ícone do site vem de **lucide-react** — nunca SVG inline, glifos de texto (`✓`, `!`, `←`) ni outra biblioteca. Convenção única em todo o app:
+
+- **Tamanhos** (`size`): **14** para indicadores pequenos (check do Select, ícone do toast), **16** para todo o resto (itens de menu, ícones dentro de botões, trigger do Select, back-links), **18** só em triggers standalone (ModeToggle). `strokeWidth` default (2), exceto **2.5** nos indicadores de 14 e **3** no check do checkbox.
+- **Cor**: sempre `currentColor` — herda do contexto (`text-lapis` em indicadores ativos, cor do botão dentro dele, `text-error` em itens destrutivos). Ícone decorativo recebe `aria-hidden="true"`.
+- **Semântica recorrente**: `Plus` cria, `Trash2` remove/destrói, `ArrowLeft` volta, `UserPlus`/`UserMinus` amizades, `Check` confirmação, `TriangleAlert` erro, `Info` info.
+- **Raio padronizado**: `rounded-xl` em cards e dialogs, `rounded-lg` em inputs/botões/menus/floaters (Select, Popover, Tooltip usa `rounded-md` por ser pequeno), `rounded-md` em sub-itens internos (step marker, ícone de toast).
+- **Cards**: use `cardClasses`/`sectionCardClasses`/`formCardClasses` de `core/components/ui/card.ts` em vez de repetir a receita (raio + borda + superfície + sombra) em cada componente.
+
 ## Rotas
 
 `src/core/router/routes.tsx` usa `createBrowserRouter` (react-router v8), tudo dentro de `MainLayout`. Rotas protegidas envolvem a página com `<PrivateRoute>` de `features/auth`. 404 via rota `*`.

@@ -1,6 +1,8 @@
 import ErrorMessage from '@/core/components/ErrorMessage';
 import { Button } from '@/core/components/ui/Button';
+import { sectionCardClasses } from '@/core/components/ui/card';
 import { TextField } from '@/core/components/ui/Field';
+import { Trash2, UserPlus } from 'lucide-react';
 import { ConfirmDialog } from '@/core/components/ui/AlertDialog';
 import { useToast } from '@/core/components/ui/useToast';
 import { apiFetch, errorMessage, resolveAssetUrl } from '@/core/config/api';
@@ -72,7 +74,7 @@ export default function FriendsSection() {
   };
 
   return (
-    <section className="flex flex-col gap-[1.1rem] rounded-xl border border-border bg-surface px-[1.8rem] py-[1.6rem] shadow-card">
+    <section className={`flex flex-col gap-[1.1rem] ${sectionCardClasses}`}>
       <h2 className="text-[1.3rem]">Friends</h2>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex items-start gap-3">
@@ -85,6 +87,7 @@ export default function FriendsSection() {
           error={errors.friendId?.message}
         />
         <Button type="submit" variant="primary" compact className="mt-[1.55rem]" disabled={!isValid || isSubmitting}>
+          <UserPlus aria-hidden="true" size={16} />
           {isSubmitting ? 'Adding…' : 'Add'}
         </Button>
       </form>
@@ -119,6 +122,7 @@ export default function FriendsSection() {
                 compact
                 onClick={() => setFriendIdToRemove(friend.id)}
               >
+                <Trash2 aria-hidden="true" size={16} />
                 Remove
               </Button>
             </li>

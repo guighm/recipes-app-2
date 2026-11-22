@@ -5,8 +5,10 @@ import { cx } from './cx';
 
 export type ButtonVariant = 'primary' | 'quiet' | 'danger';
 
+/* `inline-flex` + `justify-center` mantém ícone e rótulo centrados juntos nos
+   dois tamanhos — ícones Lucide dentro dos botões só precisam de `size={16}`. */
 const base =
-  'inline-block cursor-pointer rounded-lg border text-center font-semibold no-underline transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-45';
+  'inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg border font-semibold no-underline transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-45';
 
 const variants: Record<ButtonVariant, string> = {
   primary: 'border-transparent bg-cobalt text-white hover:bg-cobalt-ink',

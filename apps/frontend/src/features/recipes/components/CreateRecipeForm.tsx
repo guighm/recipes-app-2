@@ -11,6 +11,8 @@ import { useNavigate } from 'react-router';
 import { z } from 'zod';
 import type { CreateRecipeDTO } from '../types/recipe';
 import { Button } from '@/core/components/ui/Button';
+import { formCardClasses } from '@/core/components/ui/card';
+import { Plus } from 'lucide-react';
 
 const TITLE_MAX_LENGTH = 255;
 const DESCRIPTION_MAX_LENGTH = 2000;
@@ -64,7 +66,7 @@ export default function CreateRecipeForm() {
   };
 
   return (
-    <section className="mx-auto flex w-[min(560px,100%)] flex-col gap-[1.3rem] rounded-xl border border-border bg-surface px-[2.2rem] py-8 shadow-card">
+    <section className={`mx-auto flex w-[min(560px,100%)] flex-col gap-[1.3rem] ${formCardClasses}`}>
       <h2 className="text-[1.65rem]">New recipe</h2>
       <p className="mt-[-0.6rem] text-[0.8rem] text-ink-soft">
         Fill in the dish's details. Required fields are marked (<Asterisk />)
@@ -136,6 +138,7 @@ export default function CreateRecipeForm() {
           className="col-span-full"
           disabled={!isValid || isSubmitting}
         >
+          <Plus aria-hidden="true" size={16} />
           {isSubmitting ? 'Publishing…' : 'Publish recipe'}
         </Button>
         {apiError && <ErrorMessage message={apiError} className="col-span-full" />}

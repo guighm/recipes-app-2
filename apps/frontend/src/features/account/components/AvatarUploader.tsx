@@ -1,10 +1,12 @@
 import ErrorMessage from '@/core/components/ErrorMessage';
 import { Button } from '@/core/components/ui/Button';
+import { sectionCardClasses } from '@/core/components/ui/card';
 import { useToast } from '@/core/components/ui/useToast';
 import { apiFetch, errorMessage, resolveAssetUrl } from '@/core/config/api';
 import { useAuthStore } from '@/features/auth/stores/auth';
 import type { UserDTO } from '@/features/auth/types/user';
 import { useMutation } from '@tanstack/react-query';
+import { Upload } from 'lucide-react';
 import { useRef, useState, type ChangeEvent } from 'react';
 
 const ACCEPTED_TYPES = 'image/jpeg,image/png,image/webp,image/gif';
@@ -54,7 +56,7 @@ export default function AvatarUploader({ user }: { user: UserDTO }) {
   const displayUrl = previewUrl ?? resolveAssetUrl(user.avatarUrl);
 
   return (
-    <section className="flex flex-col gap-[1.1rem] rounded-xl border border-border bg-surface px-[1.8rem] py-[1.6rem] shadow-card">
+    <section className={`flex flex-col gap-[1.1rem] ${sectionCardClasses}`}>
       <h2 className="text-[1.3rem]">Profile picture</h2>
       <div className="flex items-center gap-[1.2rem]">
         <button
@@ -76,6 +78,7 @@ export default function AvatarUploader({ user }: { user: UserDTO }) {
             onClick={() => inputRef.current?.click()}
             disabled={uploadMutation.isPending}
           >
+            <Upload aria-hidden="true" size={16} />
             {uploadMutation.isPending ? 'Uploading…' : 'Upload new photo'}
           </Button>
           <p className="text-[0.75rem] text-ink-soft">JPEG, PNG, WEBP or GIF, up to 5MB.</p>

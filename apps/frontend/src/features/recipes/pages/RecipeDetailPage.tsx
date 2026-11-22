@@ -4,6 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useParams } from 'react-router';
+import { ArrowLeft, Plus } from 'lucide-react';
+import { sectionCardClasses } from '@/core/components/ui/card';
 import { useIsAuthenticated } from '../../auth/stores/auth';
 import type { RecipeDTO } from '../types/recipe';
 import type { CreateIngredientDTO, IngredientDTO } from '../types/ingredient';
@@ -39,7 +41,7 @@ const stepSchema = z.object({
   description: z.string().min(1, 'This field is required.').max(STEP_DESCRIPTION_MAX_LENGTH),
 });
 
-const sectionClasses = 'rounded-xl border border-border bg-surface px-[1.7rem] pt-[1.6rem] pb-[1.7rem] shadow-card';
+const sectionClasses = sectionCardClasses;
 
 export default function RecipeDetailPage() {
   const { id } = useParams();
@@ -175,15 +177,19 @@ export default function RecipeDetailPage() {
                   <dd className="text-[1.1rem] font-semibold text-ink-strong">{recipe.difficulty}</dd>
                 </div>
               </dl>
-              <Link to="/" className="mt-[1.6rem] inline-block text-[0.9rem] font-semibold no-underline hover:underline">
-                ← Back to recipes
+              <Link
+                to="/"
+                className="mt-[1.6rem] inline-flex items-center gap-1.5 text-[0.9rem] font-semibold no-underline hover:underline"
+              >
+                <ArrowLeft aria-hidden="true" size={16} />
+                Back to recipes
               </Link>
             </div>
           </header>
 
           <div className="grid grid-cols-[minmax(0,2fr)_minmax(0,3fr)] items-start gap-[1.6rem] max-[900px]:grid-cols-1">
             <section className={sectionClasses} aria-labelledby="ingredients-title">
-              <h2 id="ingredients-title" className="mb-[1.1rem] text-[1.35rem]">Ingredients</h2>
+              <h2 id="ingredients-title" className="mb-[1.1rem] text-[1.3rem]">Ingredients</h2>
               {ingredients.length > 0 ? (
                 <ul className="flex list-none flex-col gap-[0.7rem]">
                   {ingredients.map((ingredient) => (
@@ -208,6 +214,7 @@ export default function RecipeDetailPage() {
                 className="mt-[1.2rem]"
                 onClick={() => setShowIngredientForm(true)}
               >
+                <Plus aria-hidden="true" size={16} />
                 Add ingredient
               </Button>
               <Dialog
@@ -254,7 +261,7 @@ export default function RecipeDetailPage() {
             </section>
 
             <section className={sectionClasses} aria-labelledby="preparation-title">
-              <h2 id="preparation-title" className="mb-[1.1rem] text-[1.35rem]">Preparation</h2>
+              <h2 id="preparation-title" className="mb-[1.1rem] text-[1.3rem]">Preparation</h2>
               {steps.length > 0 ? (
                 <ol className="flex list-none flex-col gap-[1.1rem]">
                   {steps.map((step) => (
@@ -278,6 +285,7 @@ export default function RecipeDetailPage() {
                 className="mt-[1.2rem]"
                 onClick={() => setShowStepForm(true)}
               >
+                <Plus aria-hidden="true" size={16} />
                 Add step
               </Button>
               <Dialog

@@ -1,5 +1,6 @@
 import ErrorMessage from '@/core/components/ErrorMessage';
 import { Button } from '@/core/components/ui/Button';
+import { sectionCardClasses } from '@/core/components/ui/card';
 import { TextField } from '@/core/components/ui/Field';
 import { useToast } from '@/core/components/ui/useToast';
 import { apiFetch, errorMessage } from '@/core/config/api';
@@ -58,7 +59,7 @@ export default function ProfileForm({ user }: { user: UserDTO }) {
   };
 
   return (
-    <section className="flex flex-col gap-[1.1rem] rounded-xl border border-border bg-surface px-[1.8rem] py-[1.6rem] shadow-card">
+    <section className={`flex flex-col gap-[1.1rem] ${sectionCardClasses}`}>
       <h2 className="text-[1.3rem]">Profile</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-[1.1rem]">
         <TextField

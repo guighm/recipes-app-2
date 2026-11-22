@@ -7,6 +7,7 @@ import { apiFetch, errorMessage } from "@/core/config/api";
 import { useAuthStore, useIsAuthenticated } from "@/features/auth/stores/auth";
 import type { RecipeDTO } from "@/features/recipes/types/recipe";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { BookOpen, ChefHat, LogOut, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router";
 
@@ -55,15 +56,27 @@ export default function HomePage() {
           </p>
         </div>
         <div className="flex gap-3">
-          <ButtonLink to="/recipe/new" variant="primary">New recipe</ButtonLink>
+          <ButtonLink to="/recipe/new" variant="primary">
+            <Plus aria-hidden="true" size={16} />
+            New recipe
+          </ButtonLink>
           {isAuthenticated && (
-            <Button variant="quiet" onClick={logout}>Log out</Button>
+            <Button variant="quiet" onClick={logout}>
+              <LogOut aria-hidden="true" size={16} />
+              Log out
+            </Button>
           )}
         </div>
       </header>
 
       {!isAuthenticated && (
         <div className="mx-auto flex w-full max-w-120 flex-col items-center gap-[0.7rem] rounded-xl border-[1.5px] border-dashed border-border px-8 py-12 text-center mt-15">
+          <span
+            aria-hidden="true"
+            className="mb-1 grid size-12 place-items-center rounded-lg border border-border bg-cobalt-mist text-lapis"
+          >
+            <ChefHat size={24} />
+          </span>
           <h2 className="text-2xl">This notebook is yours</h2>
           <p className="text-ink-soft">
             Sign in to keep your recipes, ingredients, and the preparation
@@ -83,6 +96,12 @@ export default function HomePage() {
 
       {isAuthenticated && recipes && recipes.length === 0 && (
         <div className="mx-auto flex w-full max-w-120 flex-col items-center gap-[0.7rem] rounded-xl border-[1.5px] border-dashed border-border px-8 py-12 text-center">
+          <span
+            aria-hidden="true"
+            className="mb-1 grid size-12 place-items-center rounded-lg border border-border bg-cobalt-mist text-lapis"
+          >
+            <BookOpen size={24} />
+          </span>
           <h2 className="text-2xl">The notebook is empty</h2>
           <p className="text-ink-soft">Add the first recipe and start your collection.</p>
           <ButtonLink to="/recipe/new" variant="primary" className="mt-[0.6rem]">New recipe</ButtonLink>
@@ -130,6 +149,7 @@ export default function HomePage() {
                     className="flex-1"
                     onClick={() => setRecipeIdToDelete(recipe.id)}
                   >
+                    <Trash2 aria-hidden="true" size={16} />
                     Delete
                   </Button>
                 </div>
