@@ -21,7 +21,7 @@ src/
 ├── core/           # código transversal às features
 │   ├── components/         # componentes de layout (Header, Footer…) + components/ui/ (design system)
 │   ├── config/api/         # cliente HTTP (apiFetch, ApiError, getToken, resolveAssetUrl) + errorMessages (mensagens 401/403 usadas pelos forms)
-│   ├── layouts/            # MainLayout
+│   ├── layouts/            # MainLayout + AuthenticatedLayout (rotas autenticadas)
 │   ├── pages/              # NotFoundPage
 │   ├── router/             # routes.tsx (createBrowserRouter) + index
 │   └── validation/         # regras de email/senha compartilhadas (constantes + patterns)
@@ -63,7 +63,7 @@ Todo ícone do site vem de **lucide-react** — nunca SVG inline, glifos de text
 
 ## Rotas
 
-`src/core/router/routes.tsx` usa `createBrowserRouter` (react-router v8), tudo dentro de `MainLayout`. Rotas protegidas envolvem a página com `<PrivateRoute>` de `features/auth`. 404 via rota `*`.
+`src/core/router/routes.tsx` usa `createBrowserRouter` (react-router v8), tudo dentro de `MainLayout` (transversal: Toaster + `fetchCurrentUser`). Rotas protegidas ficam aninhadas sob o `AuthenticatedLayout` (Header/Footer das telas autenticadas) envolvido por `<PrivateRoute>` de `features/auth`. 404 via rota `*` (fora do layout autenticado; Header/Footer não aparecem nela).
 
 Exceção: `/recipe/:id` **não** usa `<PrivateRoute>` — a página se auto-protege dentro dela (`RecipeDetailPage`): usuário deslogado vê "Sign in to view the recipe" em vez do redirect padrão. `PrivateRoute` guarda o destino em `state.from` e o `LoginForm` restaura; registro redireciona para `/login` sem auto-login.
 

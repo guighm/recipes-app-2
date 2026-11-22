@@ -7,43 +7,30 @@ import HomePage from "@/features/recipes/pages/HomePage";
 import RecipeDetailPage from "@/features/recipes/pages/RecipeDetailPage";
 import { createBrowserRouter } from "react-router";
 import MainLayout from "../layouts/MainLayout";
+import AuthenticatedLayout from "../layouts/AuthenticatedLayout";
 import NotFoundPage from "../pages/NotFoundPage";
 
 export const router = createBrowserRouter([
   {
     element: <MainLayout />,
     children: [
+      // Layout das rotas autenticadas: o <PrivateRoute> protege o layout
+      // inteiro de uma vez (Header/Footer entram junto com a guarda).
       {
-        path: '/', element:
+        element: (
           <PrivateRoute>
-            <HomePage />
+            <AuthenticatedLayout />
           </PrivateRoute>
+        ),
+        children: [
+          { path: '/', element: <HomePage /> },
+          { path: '/account', element: <AccountPage /> },
+          { path: '/recipe/new', element: <CreateRecipePage /> },
+        ],
       },
       { path: '/login', element: <LoginPage /> },
       { path: '/register', element: <RegisterPage /> },
-      {
-        path: '/account', element:
-          <PrivateRoute>
-            <AccountPage />
-          </PrivateRoute>
-      },
-      {
-        path: '/recipe',
-        children: [
-          {
-            path: "new",
-            element: (
-              <PrivateRoute>
-                <CreateRecipePage />
-              </PrivateRoute>
-            )
-          },
-          {
-            path: ":id",
-            element: <RecipeDetailPage />
-          }
-        ]
-      },
+      { path: '/recipe/:id', element: <RecipeDetailPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

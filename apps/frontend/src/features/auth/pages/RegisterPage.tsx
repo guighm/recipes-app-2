@@ -1,5 +1,10 @@
-import RegisterForm from '../components/RegisterForm';
+import AuthTabsCard from '../components/AuthTabsCard';
+import AuthPageShell from '../components/AuthPageShell';
 
 export default function RegisterPage() {
-  return <RegisterForm />;
+  return (
+    <AuthPageShell>
+      <AuthTabsCard />
+    </AuthPageShell>
+  );
 }

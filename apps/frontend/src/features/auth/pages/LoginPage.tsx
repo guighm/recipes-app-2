@@ -1,5 +1,10 @@
-import LoginForm from '../components/LoginForm';
+import AuthTabsCard from '../components/AuthTabsCard';
+import AuthPageShell from '../components/AuthPageShell';
 
 export default function LoginPage() {
-  return <LoginForm />;
+  return (
+    <AuthPageShell>
+      <AuthTabsCard />
+    </AuthPageShell>
+  );
 }

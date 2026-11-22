@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Link, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import type { RegisterDTO } from '../types/user';
 import { apiFetch, errorMessage } from '@/core/config/api';
 import { EMAIL_MAX_LENGTH, EMAIL_PATTERN } from '@/core/validation/email';
@@ -12,7 +12,6 @@ import {
   isPasswordValid,
 } from '@/core/validation/password';
 import Asterisk from '@/core/components/Asterisk';
-import { formCardClasses } from '@/core/components/ui/card';
 import { TextField } from '@/core/components/ui/Field';
 import { Button } from '@/core/components/ui/Button';
 import ErrorMessage from '@/core/components/ErrorMessage';
@@ -62,9 +61,8 @@ export default function RegisterForm() {
   };
 
   return (
-    <section className={`mx-auto flex w-[min(430px,100%)] flex-col gap-[1.3rem] ${formCardClasses}`}>
-      <h2 className="text-[1.65rem]">Create your account</h2>
-      <p className="mt-[-0.6rem] text-[0.8rem] text-ink-soft">
+    <div className="flex flex-col gap-[1.3rem]">
+      <p className="text-[0.8rem] text-ink-soft">
         Required fields are marked (<Asterisk />)
       </p>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-[1.1rem]">
@@ -106,10 +104,7 @@ export default function RegisterForm() {
           {isSubmitting ? 'Creating account…' : 'Create account'}
         </Button>
         {apiError && <ErrorMessage message={apiError} />}
-        <p className="mt-1.5 text-[0.95rem] text-ink-soft">
-          Already registered? <Link to="/login" className="font-semibold text-lapis">Sign in</Link>
-        </p>
       </form>
-    </section>
+    </div>
   );
 }
