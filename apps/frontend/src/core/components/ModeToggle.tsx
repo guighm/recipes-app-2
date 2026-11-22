@@ -12,7 +12,7 @@ const triggerClasses =
   'inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-ink outline-none transition-colors duration-200 hover:text-lapis data-[popup-open]:text-lapis';
 
 const itemClasses =
-  'flex cursor-pointer items-center justify-center gap-2 rounded-md px-4 py-[0.45rem] text-[0.92rem] outline-none data-[highlighted]:bg-cobalt-mist';
+  'flex cursor-pointer items-center gap-2 rounded-md px-2 py-[0.45rem] text-[0.92rem] outline-none data-[highlighted]:bg-cobalt-mist';
 
 /**
  * Dropdown de seleção de tema. Um `RadioGroup` do base-ui dá aos itens a
@@ -35,7 +35,7 @@ export default function ModeToggle() {
       />
       <BaseMenu.Portal>
         <BaseMenu.Positioner align="end" sideOffset={6} className="z-50">
-          <BaseMenu.Popup className="flex flex-col items-start rounded-lg border border-border bg-surface p-1 shadow-card-lifted outline-none transition-opacity duration-150 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0">
+          <BaseMenu.Popup className="min-w-40 rounded-lg border border-border bg-surface p-1 shadow-card-lifted outline-none transition-opacity duration-150 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0">
             <BaseMenu.RadioGroup value={mode} onValueChange={(value) => setMode(value as ThemeMode)}>
               {MODE_OPTIONS.map(({ value, label, icon: OptionIcon }) => (
                 <BaseMenu.RadioItem key={value} value={value} className={itemClasses}>
