@@ -1,6 +1,7 @@
 import Avatar from '@/features/auth/components/Avatar';
 import { useAuthStore, useIsAuthenticated } from '@/features/auth/stores/auth';
 import { Link } from 'react-router';
+import ModeToggle from './ModeToggle';
 
 const stripe =
   'mt-1 h-0.5 w-0 bg-lapis transition-[width] duration-250 ease-in-out group-hover:w-full group-focus-within:w-full';
@@ -40,6 +41,7 @@ export default function Header() {
               <div aria-hidden="true" className={stripe} />
             </Link>
           )}
+          <ModeToggle />
         </nav>
       </div>
     </header>
