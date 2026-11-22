@@ -33,6 +33,10 @@ services:
       context: .
       dockerfile: Dockerfile
     image: recipes_app_2_backend
+    # Sem isso, `docker compose pull` tenta puxar a imagem do Docker Hub e
+    # falha com "pull access denied" — a imagem é buildada da fonte, nunca
+    # puxada (o pull passa a pular o serviço sem warnings).
+    pull_policy: build
     # Volta sozinho após queda do daemon ou reboot do host (a menos que seja
     # parado explicitamente com `docker compose stop/down`)
     restart: unless-stopped
