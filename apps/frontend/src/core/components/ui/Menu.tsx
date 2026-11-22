@@ -30,7 +30,7 @@ interface MenuProps {
 }
 
 const itemClasses =
-  'flex cursor-pointer items-center gap-2 rounded-md px-2 py-[0.45rem] text-[0.92rem] outline-none data-[highlighted]:bg-cobalt-mist data-[disabled]:opacity-45';
+  'flex cursor-pointer items-center justify-center gap-2 rounded-md px-4 py-[0.45rem] text-[0.92rem] outline-none data-[highlighted]:bg-cobalt-mist data-[disabled]:opacity-45';
 
 /**
  * Dropdown action menu. Items with `href` navigate (`LinkItem` +
@@ -42,10 +42,12 @@ export function Menu({ label, trigger, items, variant = 'quiet', align = 'end' }
       <BaseMenu.Trigger render={trigger ?? <Button variant={variant}>{label}</Button>} />
       <BaseMenu.Portal>
         <BaseMenu.Positioner align={align} sideOffset={6} className="z-50">
-          <BaseMenu.Popup className="min-w-44 rounded-lg border border-border bg-surface p-1 shadow-card-lifted outline-none transition-opacity duration-150 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0">
+          <BaseMenu.Popup className="flex flex-col items-start rounded-lg border border-border bg-surface p-1 shadow-card-lifted outline-none transition-opacity duration-150 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0">
             {items.map((option) => (
               <Fragment key={option.label}>
-                {option.separatorBefore && <BaseMenu.Separator className="mx-1 my-1 border-t border-border" />}
+                {option.separatorBefore && (
+                  <BaseMenu.Separator className="mx-1 my-1 self-stretch border-t border-border" />
+                )}
                 {option.href ? (
                   <BaseMenu.LinkItem
                     render={<Link to={option.href} />}
