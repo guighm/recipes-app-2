@@ -27,7 +27,7 @@ pnpm preview    # servir o build de produção
 pnpm lint       # oxlint
 ```
 
-Não há testes configurados. A porta **5173** do dev server é a origem esperada no `ALLOWED_ORIGIN` do backend — não troque sem ajustar o backend.
+Não há testes configurados. A porta **5173** do dev server é a origem esperada no `ALLOWED_ORIGIN` do backend — não troque sem ajustar o backend. (A porta não é `strictPort`: se a 5173 estiver ocupada, o Vite sobe em outra e o CORS quebra silenciosamente.)
 
 ## Configuração
 
@@ -46,7 +46,7 @@ src/
 ├── app/            # entrada (main.tsx, providers) + globals.css (tema)
 ├── core/           # código transversal às features
 │   ├── components/         # layout (Header, Footer…) + components/ui/ (design system)
-│   ├── config/api/         # cliente HTTP (apiFetch, ApiError, getToken, resolveAssetUrl)
+│   ├── config/api/         # cliente HTTP (apiFetch, ApiError, getToken, resolveAssetUrl) + errorMessages
 │   ├── layouts/            # MainLayout
 │   ├── pages/              # NotFoundPage
 │   ├── router/             # routes.tsx (createBrowserRouter)
@@ -63,10 +63,10 @@ src/
 
 ## API e autenticação
 
-- Todo acesso ao backend passa por `apiFetch` (`src/core/config/api/api.ts`): injeta `Authorization: Bearer` do localStorage (`TOKEN_KEY = 'jwt'`), serializa JSON e decodifica erros no formato do NestJS (`body.message` string ou array), lançando `ApiError` com `status`. **Não usar `fetch` direto.**
-- Assets/imagens vindos da API passam por `resolveAssetUrl`.
-- Estado de auth: `useAuthStore` (`features/auth/stores/auth.ts`); em 401 em `/auth/me` o store faz logout automático.
-- Rotas protegidas envolvem as páginas com `<PrivateRoute>` (`features/auth`).
+- Todo acesso ao backend passa por `apiFetch` (`src/core/config/api/api.ts`): injeta `Authorization: Bearer` do localStorage (`TOKEN_KEY = 'jwt'`), serializa JSON e decodifica erros no formato do NestJS (`body.message` string ou array), lançando `ApiError` com `status`. **Não usar `fetch` direto** — inclusive uploads: com body `FormData` o `apiFetch` pula o `Content-Type` (o browser monta o multipart), então o avatar também passa por ele.
+- Assets/imagens vindos da API passam por `resolveAssetUrl`; mensagens de erro 401/403 dos forms vêm de `errorMessages` (`core/config/api/`).
+- Estado de auth: `useAuthStore` (`features/auth/stores/auth.ts`); em 401 em `/auth/me` o store faz logout automático — via `fetchCurrentUser`, chamado on-mount no `MainLayout`, então ocorre na carga de qualquer página quando o token expira.
+- Rotas protegidas envolvem as páginas com `<PrivateRoute>` (`features/auth`) — exceção: `/recipe/:id` se auto-protege dentro da página (usuário deslogado vê "Sign in to view the recipe").
 - Constantes de validação em `core/validation/` espelham as regras do backend — mantenha sincronizadas.
 
 ## Docker
@@ -75,7 +75,7 @@ src/
 docker compose up --build          # só o frontend (5173 → nginx na 8080)
 ```
 
-Para subir a **stack completa** (frontend + backend + Postgres), use `apps/backend/compose.yaml`, que builda este mesmo Dockerfile.
+Para subir a **stack completa** (frontend + backend + Postgres), use o `compose.yaml` da raiz do monorepo (`cp .env.example .env` + `docker compose up -d --wait`) — ele inclui este compose e o do backend via `include:` e é o único ponto de entrada da stack inteira.
 
 - Multi-stage: build com `node:24-alpine` + pnpm (corepack, `pnpm fetch` para cache), servido por `nginxinc/nginx-unprivileged:1.28-alpine` na porta **8080**, com healthcheck.
 - A imagem já roda como usuário comum (uid 101) e `no-new-privileges` está habilitado — **preserve esse hardening** ao alterar o `Dockerfile` ou o `compose.yaml`.

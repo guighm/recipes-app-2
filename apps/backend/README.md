@@ -1,13 +1,13 @@
 # Recipes API (NestJS)
 
-Backend do monorepo `recipes-app-2`: API REST de receitas com autenticação JWT, upload de avatares e amizades. Construída com **Nest 12 + Drizzle ORM + PostgreSQL** (migrada do backend original em Spring Boot, `old-backend/`). O frontend irmão (Vite + React) vive em `../frontend` e é servido pela stack do `compose.yaml` deste diretório.
+Backend do monorepo `recipes-app-2`: API REST de receitas com autenticação JWT, upload de avatares e amizades. Construída com **Nest 12 + Drizzle ORM + PostgreSQL** (reescrita do backend original em Java do projeto, hoje removido do repositório). O frontend irmão (Vite + React) vive em `../frontend`; a stack completa (frontend incluso) é subida pelo `compose.yaml` da raiz do monorepo.
 
 ## Setup (desenvolvimento)
 
 Pré-requisitos: Node 24, pnpm (fixado via campo `packageManager`), Docker.
 
 ```bash
-docker compose up -d db db-test   # Postgres: db (5432) e db-test (5433)
+docker compose up -d postgres postgres-test   # Postgres: postgres (5432) e postgres-test (5433)
 cp .env.example .env
 pnpm install
 pnpm start:dev                    # http://localhost:3000
@@ -18,22 +18,22 @@ No boot a aplicação aplica as migrations (`drizzle/`) e faz o seed do usuário
 - **email:** `admin@email.com`
 - **password:** `123`
 
-## Stack completa com Docker
+## Docker
 
-O `compose.yaml` deste diretório é o ponto de entrada único da stack (substitui o antigo `docker-compose.yaml`):
+O `compose.yaml` deste diretório sobe o backend e os bancos — o serviço `frontend` **não** é declarado aqui (fica em `apps/frontend/compose.yaml`, única declaração dele). Na stack completa, o `compose.yaml` da raiz do monorepo inclui este arquivo e o do frontend via `include:` e é o ponto de entrada único:
 
 | Serviço | Porta no host | Descrição |
 |---|---|---|
-| `app` | 3000 | API NestJS (imagem com HEALTHCHECK em `/health`) |
-| `frontend` | 5173 | Frontend em `nginx-unprivileged` (escuta na 8080 interna) |
-| `db` | 5432 | Postgres 17 de desenvolvimento (volume persistente) |
-| `db-test` | 5433 | Postgres 17 efêmero (tmpfs) para os testes e2e |
+| `backend` | 3000 | API NestJS (imagem com HEALTHCHECK em `/health`) |
+| `postgres` | 5432 | Postgres 17 de desenvolvimento (volume persistente) |
+| `postgres-test` | 5433 | Postgres 17 efêmero (tmpfs) para os testes e2e (`profile test`) |
 
 ```bash
-docker compose up -d --build
+docker compose up -d --build       # a partir deste diretório: backend + postgres
+# stack completa (frontend incluso): docker compose up -d --wait na raiz
 ```
 
-As variáveis `DB_USERNAME`, `DB_PASSWORD` e `JWT_SECRET` são **obrigatórias** no compose; o restante tem defaults. No frontend, `VITE_API_URL` é build-arg (default `http://localhost:3000`) e deve apontar para a URL que o navegador do host usa para alcançar a API — é embutido no bundle em tempo de build. Os contêineres rodam com hardening (`read_only`, `no-new-privileges`, `init: true`), subida em ordem via healthchecks e `restart: unless-stopped`.
+As variáveis `DB_USERNAME`, `DB_PASSWORD` e `JWT_SECRET` são **obrigatórias** no compose; o restante tem defaults (veja o `.env.example` da raiz para a stack completa). Os contêineres rodam com hardening (`read_only`, `no-new-privileges`, `init: true`), subida em ordem via healthchecks e `restart: unless-stopped`.
 
 ## Endpoints
 
@@ -52,7 +52,7 @@ Todas as rotas exigem `Authorization: Bearer <token>`, exceto as marcadas como p
 | GET | `/users/me/friends` | JWT | Lista de amizades |
 | POST | `/users/me/friends` | JWT | Cria amizade bidirecional (400 se `friendId === userId`; 404 se o usuário não existe; 409 se já são amigos) |
 | DELETE | `/users/me/friends/:friendId` | JWT | Remove a amizade → 204 (404 se não existe) |
-| GET | `/recipes` | JWT | Lista (200 com `[]` quando vazio) |
+| GET | `/recipes` | JWT | Lista **todas as receitas de todos os usuários** (sem paginação; `[]` quando vazio) — a home do frontend filtra pelas do usuário logado |
 | GET | `/recipes/:id` | JWT | Detalhe (404 se não existir) |
 | POST | `/recipes` | JWT | Cria receita para o usuário do token → 201 + `Location` |
 | DELETE | `/recipes/:id` | JWT | Remove — só o dono (senão **403**; 404 se não existir) → 204 |
@@ -64,11 +64,11 @@ Todas as rotas exigem `Authorization: Bearer <token>`, exceto as marcadas como p
 Notas:
 
 - DTOs validados com `class-validator` e o `ValidationPipe` global (`whitelist: true`): campos extras no corpo são descartados silenciosamente.
-- Todo `POST` com resposta `201` (users/recipes/ingredients/steps) seta o header `Location` para o recurso criado.
+- Todo `POST` com resposta `201` (users/recipes/ingredients/steps) seta o header `Location` para o recurso criado — exceção: `POST /users/me/friends` responde `201` sem `Location`. Em `/ingredients` e `/steps`, o `Location` (`/ingredients/:id`, `/steps/:id`) aponta para rotas que só existem como POST (não há GET nelas).
 - O registro exige `name`, `email`, `password` (mín. 8, com maiúscula, minúscula, dígito e especial) e `avatarUrl` não vazio.
 - A troca de senha valida a senha atual e rejeita reutilização de senha do histórico; a antiga é arquivada no mesmo banco.
 - `POST /ingredients` e `POST /steps` verificam **apenas a existência** da receita, não a posse.
-- `POST /recipes` exige todos os campos: `title`, `description`, `preparationTime` e `servings` (inteiros), `difficulty` (string livre, sem enum no banco, máx. 255) e `imageUrl`.
+- `POST /recipes` exige todos os campos: `title`, `description`, `preparationTime` e `servings` (inteiros ≥ 1), `difficulty` (string livre, sem enum no banco, máx. 255) e `imageUrl`.
 - Swagger UI em [`http://localhost:3000/docs`](http://localhost:3000/docs).
 
 ## Uploads
@@ -83,9 +83,9 @@ Avatares são enviados via `POST /users/me/avatar` (campo `file`): JPEG/PNG/WebP
 |---|---|---|
 | `DATABASE_URL` | `postgres://root:123@localhost:5432/recipes_app` | Conexão Postgres |
 | `DB_USERNAME` / `DB_PASSWORD` | `root` / `123` | Fallback para montar `DATABASE_URL` (obrigatórias no compose) |
-| `PORT` | `3000` (via `.env.example`; sem `.env`, o fallback em `main.ts` é `8000`) | Porta HTTP |
+| `PORT` | `3000` (default em `src/config/env.ts`, reatribuído a `process.env` pelo `ConfigModule` — o fallback `8000` de `main.ts` não é alcançado) | Porta HTTP |
 | `ALLOWED_ORIGIN` | `http://localhost:5173` | Origem CORS (frontend Vite) |
-| `JWT_SECRET` | `your-secure-secret` | Secret do JWT (HS256) — obrigatório no compose |
+| `JWT_SECRET` | ⚠️ sem default em `env.ts`, mas o `AuthModule` cai para `'your-secure-secret'` hardcoded se ausente (obrigatório no compose) | Secret do JWT (HS256) — defina sempre, inclusive em dev: sem ela o boot sobe silenciosamente com o segredo conhecido |
 | `JWT_EXPIRATION_MS` | `72000000` | `expiresIn` do token, em segundos apesar do nome (72000000 s ≈ 2,3 anos — **não confunda com milissegundos**) |
 | `JWT_ISSUER` | `recipes-app-api` | Issuer do token |
 
@@ -99,13 +99,15 @@ pnpm build              # nest build → dist/
 pnpm format             # prettier --write
 pnpm lint               # oxlint em src/ e test/
 pnpm test               # testes unitários (Vitest) — não precisam de Postgres
-pnpm test:e2e           # e2e contra o db-test (docker compose up -d --wait db-test)
+pnpm test:e2e           # e2e contra o postgres-test (docker compose up -d --wait postgres-test)
 pnpm db:generate        # gera migrations a partir de src/database/schema.ts
 pnpm db:migrate         # aplica migrations pendentes
 pnpm db:studio          # Drizzle Studio
 ```
 
-Os testes e2e apontam para a porta 5433 (`db-test`) e fazem `TRUNCATE` a cada teste — nunca rode e2e contra o Postgres de dev (5432). Em dev, exporte um `DATABASE_URL` apontando para o banco certo antes de usar os scripts `db:*`.
+Os testes e2e apontam para a porta 5433 (`postgres-test`) e fazem `TRUNCATE` a cada teste — nunca rode e2e contra o Postgres de dev (5432). Em dev, exporte um `DATABASE_URL` apontando para o banco certo antes de usar os scripts `db:*`.
+
+> O `package.json` ainda tem scripts do scaffold sem uso real (`start`, `start:debug`, `deploy`, `test:watch`, `test:cov`, `test:debug`). O `start:prod` roda `node dist/main` sem `.js` — falha em ESM; em produção use `node dist/main.js` (como faz o CMD do Docker).
 
 ## Docker (imagem da API)
 

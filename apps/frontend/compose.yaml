@@ -1,6 +1,9 @@
 # Sobe apenas o frontend (SPA React + Vite servida pelo nginx-unprivileged).
-# Backend e Postgres ficam no apps/backend/compose.yaml, que também
-# builda este mesmo Dockerfile e é a forma recomendada de subir a stack toda.
+# ESTE é o único lugar onde o serviço `frontend` é declarado (VITE_API_URL,
+# porta, hardening). Em dev standalone ele sobe sozinho — backend e Postgres
+# ficam no apps/backend/compose.yaml. Na stack completa, o compose.yaml da
+# raiz do monorepo inclui este arquivo e adiciona só os fios de orquestração:
+# depends_on backend (service_healthy) + rede recipes_app.
 #
 name: recipes_app_2_frontend
 

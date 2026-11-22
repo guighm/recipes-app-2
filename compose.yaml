@@ -1,0 +1,52 @@
+# Stack completa do monorepo — ponto de entrada único. Inclui os composes de
+# cada app e roda tudo com um único comando, a partir da raiz:
+#
+#   docker compose up -d --wait     # backend + frontend + postgres
+#   docker compose down             # encerra (dados de dev persistem no volume)
+#
+# Para os testes e2e do backend:
+#
+#   docker compose --profile test up -d --wait postgres-test  # Postgres efêmero
+#   docker compose --profile test down                        # encerra
+#
+# Cada serviço é declarado em UM único arquivo (a raiz não redefine nada):
+#   apps/backend/compose.yaml  → backend (NestJS), postgres,
+#                                postgres-test (profile test) e a rede
+#                                recipes_app
+#   apps/frontend/compose.yaml → frontend (build-arg VITE_API_URL, porta,
+#                                hardening)
+#
+# A raiz só adiciona os fios de orquestração do frontend, que não fazem
+# sentido no standalone dele: `depends_on backend (service_healthy)` — sobe o
+# nginx só quando a API de fato responde a /health, não quando o container
+# apenas existe — e a rede `recipes_app` (declarada no compose do backend).
+#
+# Serviços expostos ao host:
+#   http://localhost:5173  → frontend (nginx-unprivileged, porta interna 8080)
+#   http://localhost:3000  → backend: API NestJS (Swagger em /docs)
+#   localhost:5432         → postgres (dev)
+#   localhost:5433         → postgres-test (efêmero, só com profile "test")
+#
+# Variáveis vêm do .env da RAIZ (não dos .env dos apps, que valem só para
+# dev local rodando o compose individualmente):
+#   cp .env.example .env
+#
+#   DB_USERNAME, DB_PASSWORD, JWT_SECRET (obrigatórias)
+#   PORT, ALLOWED_ORIGIN, JWT_EXPIRATION_MS, JWT_ISSUER, VITE_API_URL
+#   (opcionais; defaults idênticos aos dos composes incluídos)
+
+name: recipes_app_2
+
+include:
+  - ./apps/backend/compose.yaml
+  - ./apps/frontend/compose.yaml
+
+services:
+  frontend:
+    # Merge com a declaração única de apps/frontend/compose.yaml: aqui só
+    # entram os atributos que dependem dos serviços incluídos do backend
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - recipes_app

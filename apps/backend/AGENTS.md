@@ -17,8 +17,9 @@ pnpm db:studio   # Drizzle Studio
 ```
 
 - Os scripts `db:*` usam `drizzle.config.ts`, que lê `DATABASE_URL` (via `dotenv`, com fallback `postgres://root:123@localhost:5432/recipes_app`). Exporte um `DATABASE_URL` apontando para o banco certo antes de rodar.
-- O e2e (`vitest.config.e2e.ts`) aponta `DATABASE_URL` para a porta **5433** (`db-test` do compose, banco `recipes_app_test`, usuário `root`). Antes de rodar: `docker compose up -d --wait db-test`. Nunca rode e2e contra o Postgres de dev (5432) — os testes fazem `TRUNCATE`.
+- O e2e (`vitest.config.e2e.ts`) aponta `DATABASE_URL` para a porta **5433** (`postgres-test` do compose, banco `recipes_app_test`, usuário `root`). Antes de rodar: `docker compose up -d --wait postgres-test` (o serviço tem profile `test` no compose — targetar o serviço o ativa automaticamente, e ele não sobe junto com a stack da aplicação). Nunca rode e2e contra o Postgres de dev (5432) — os testes fazem `TRUNCATE`.
 - Formatação: Prettier (`singleQuote` + `trailingComma: "all"`); lint via oxlint (`oxlint.json`) em `src/` e `test/` — `@typescript-eslint/no-explicit-any` está off e `no-floating-promises` em warn.
+- Scripts extras do scaffold existem no `package.json` sem uso real (`start`, `start:debug`, `deploy`, `test:watch`, `test:cov`, `test:debug`). Atenção ao `start:prod`: roda `node dist/main` **sem `.js`**, o que quebra em ESM/`nodenext` (ENOENT) — em produção use `node dist/main.js` (como faz o CMD do Docker) ou corrija o script antes de depender dele.
 
 ## Estrutura
 
@@ -40,9 +41,9 @@ Novos domínios seguem o padrão `<nome>/{<nome>.module.ts,<nome>.controller.ts,
 - `/auth`: `POST /login` (público, `@HttpCode(200)`, responde `{ id, accessToken }`) e `GET /me` (**protegido**, sem `@Public`; devolve `{ id, name, email, avatarUrl, createdAt }` e dá 404 se o usuário do token não existe mais).
 - `/users`: `POST /register` (público, `201` com header `Location: /users/:id`; o DTO exige também `avatarUrl` não-vazio), `PATCH /me` (só `name`/`email`; sem mudanças efetivas devolve o registro atual sem UPDATE; e-mail duplicado → 409), `PATCH /me/password`, `POST /me/avatar` (multipart) e `DELETE /me`.
 - `/users/me/friends`: `GET`, `POST` (400 se `friendId === userId`) e `DELETE /:friendId` — controlado pelo módulo `friends`.
-- `/recipes`: `GET`, `GET /:id`, `POST`, `DELETE /:id` (403 se não é do usuário logado), `GET /:id/ingredients`, `GET /:id/steps`. `difficulty` é string livre (sem enum no banco, máx. 255) e `imageUrl` é obrigatório no POST.
+- `/recipes`: `GET`, `GET /:id`, `POST`, `DELETE /:id` (403 se não é do usuário logado), `GET /:id/ingredients`, `GET /:id/steps`. `difficulty` é string livre (sem enum no banco, máx. 255) e `imageUrl` é obrigatório no POST. **`GET` (sem id) é global** — devolve receitas de todos os usuários (com `userId` no payload, sem paginação nem filtro); a home do frontend filtra client-side pelas do usuário logado. `preparationTime` e `servings` são inteiros ≥ 1 (`Min(1)`).
 - `/ingredients` e `/steps`: apenas `POST` (criação avulsa); leitura é pelas rotas aninhadas em `/recipes`. **Verificam só a existência da recipe, não ownership** — qualquer usuário autenticado anexa a qualquer receita.
-- Todo `POST` que retorna `201` (users/recipes/ingredients/steps) seta header `Location` para o recurso criado.
+- Todo `POST` que retorna `201` (users/recipes/ingredients/steps) seta header `Location` para o recurso criado — exceção: `POST /users/me/friends` responde `201` sem `Location`. Nas rotas `/ingredients` e `/steps` o `Location` aponta para `/ingredients/:id` e `/steps/:id`, que **só existem como POST** (não há GET nelas) — o header é apenas convenção REST.
 
 ## Convenções do código
 
@@ -57,6 +58,7 @@ Novos domínios seguem o padrão `<nome>/{<nome>.module.ts,<nome>.controller.ts,
 
 - `JwtAuthGuard` é **global** (registrado via `APP_GUARD` em `app.module.ts`). Tudo requer JWT por padrão; rotas públicas recebem `@Public()` (`common/decorators/public.decorator.ts`).
 - Token: HS256 com claim `{ sub: email, id }` + issuer `JWT_ISSUER` (verificado no guard; header deve ser `Bearer <token>`). Assinatura/config do `JwtModule` ficam em `AuthModule` (global), com `JWT_SECRET` e `JWT_EXPIRATION_MS` — apesar do nome, o valor é usado como `expiresIn` do jsonwebtoken, que interpreta número como **segundos** (72000000 ≈ 2,3 anos; não renomeie sem migrar os valores de env). O helper `login()` de e2e devolve `accessToken`.
+- ⚠️ **`JWT_SECRET` tem fallback hardcoded**: `env.ts` não dá default, e o compose o exige (`${JWT_SECRET:?}`), mas `AuthModule` cai para `'your-secure-secret'` quando ausente (`auth.module.ts`). Combinado com o `skipMissingProperties: true`, um boot local sem a variável sobe **silenciosamente** assinando/verificando tokens com esse segredo conhecido. Defina `JWT_SECRET` sempre — inclusive em dev.
 - `@CurrentUser()` (`common/decorators/current-user.decorator.ts`) injeta `AuthUser = { id, email }` montado pelo guard (`request-with-user.ts`).
 - Senhas: `bcryptjs` (`compare`/`hash`, 10 rounds). Validações de email/senha em `common/validators/` — senha: mínimo 8, máximo 72 (limite de bytes que o bcrypt hasheia) e padrão exigindo maiúscula, minúscula, dígito e caractere especial. São espelhadas no frontend (`../frontend/src/core/validation/`); mantenha os dois lados sincronizados.
 - Troca de senha (`PATCH /users/me/password`): exige `currentPassword` correto (401 se errado) e rejeita senha igual à atual ou a qualquer entrada do `password_history` (409) — a senha antiga é gravada no histórico na mesma transação da troca.
@@ -64,7 +66,7 @@ Novos domínios seguem o padrão `<nome>/{<nome>.module.ts,<nome>.controller.ts,
 ## Banco de dados
 
 - Schema único em `src/database/schema.ts` (tabelas `users`, `recipes`, `ingredients`, `steps`, `password_history`, `friendships`). Migrations ficam em `drizzle/` (geradas por `pnpm db:generate`) — **nunca edite SQL de migration ou snapshots à mão**.
-- FKs com `onDelete: 'cascade'`: apagar um `user` apaga recipes/ingredients/steps/password_history/friendships dele; apagar uma recipe apaga seus ingredients/steps.
+- FKs com `onDelete: 'cascade'`: apagar um `user` apaga recipes/ingredients/steps/password_history/friendships dele; apagar uma recipe apaga seus ingredients/steps. Ressalva: a FK de `recipes_categories` para `recipes` **não** tem cascade — o quadro acima pressupõe as tabelas de paridade vazias (hoje estão; se um dia tiverem linhas e a FK disparar, `DELETE /users/me` falha com FK violation).
 - `friendships` é **bidirecional**: cada amizade grava duas linhas (`(A,B)` e `(B,A)`) numa mesma transação — considere isso em queries e testes.
 - `DatabaseModule.onApplicationBootstrap` roda `migrate()` + seed a cada boot (migrations de `drizzle/` relativo ao cwd). O seed (SeedService) cria o admin `admin@email.com` / `123` (hash bcrypt 10) com `avatarUrl: 'admin'`, idempotente via `onConflictDoNothing({ target: users.email })` — inclusive na imagem Docker e nos testes e2e (o `resetDb` re-seed após o TRUNCATE).
 - As tabelas `categories` e `recipes_categories` existem só por paridade com o schema do projeto Java original; não use como referência.
@@ -83,8 +85,8 @@ Novos domínios seguem o padrão `<nome>/{<nome>.module.ts,<nome>.controller.ts,
 
 ## Docker
 
-- `Dockerfile`: multi-stage `node:24-alpine` + corepack/pnpm (installs cacheados via `--mount=type=cache` no store do pnpm; copia também `pnpm-workspace.yaml`, que configura approve-builds); imagem copia `dist/` + `drizzle/` (migrations rodam no boot), `pnpm install --prod` com `--ignore-scripts` (nada de postinstall roda na imagem de produção), cria `/app/uploads` com dono `node`, roda como usuário `node`, `CMD node dist/main.js`, `HEALTHCHECK` em `/health` (wget, com `start-period` cobrindo migrate+seed, que rodam antes do listen) e `NODE_OPTIONS=--enable-source-maps`.
-- `compose.yaml` **deste diretório** é o ponto de entrada da stack completa (app:3000 + frontend nginx-unprivileged em 8080 mapeado para o host 5173 + db:5432 + db-test:5433 efêmero, ambos `postgres:17`) — o compose do frontend sobe só o frontend. O nome do projeto é fixo (`recipes_app_2`) e todos os serviços usam a rede `recipes_app` com `restart: unless-stopped`.
+- `Dockerfile`: multi-stage `node:24-alpine` + corepack/pnpm (installs cacheados via `--mount=type=cache` no store do pnpm; copia também `pnpm-workspace.yaml`, que configura `allowBuilds` (esbuild: true, `@scarf/scarf`: false)); imagem copia `dist/` + `drizzle/` (migrations rodam no boot), `pnpm install --prod` com `--ignore-scripts` (nada de postinstall roda na imagem de produção), cria `/app/uploads` com dono `node`, roda como usuário `node`, `CMD node dist/main.js`, `HEALTHCHECK` em `/health` (wget, com `start-period` cobrindo migrate+seed, que rodam antes do listen) e `NODE_OPTIONS=--enable-source-maps`.
+- `compose.yaml` **deste diretório** sobe backend:3000 + postgres:5432 + postgres-test:5433 efêmero (ambos `postgres:17`; os nomes dos serviços seguem a tecnologia — `backend` espelha a pasta, `postgres`/`postgres-test` são os bancos) — o serviço `frontend` **não** é declarado aqui: ele fica em `apps/frontend/compose.yaml` (única declaração). O `compose.yaml` da raiz do monorepo inclui os dois via `include:` e é o ponto de entrada da stack completa: cada serviço é declarado uma única vez, e a raiz adiciona só os fios de orquestração do frontend (`depends_on: backend (service_healthy)` + rede `recipes_app`). O nome do projeto é fixo (`recipes_app_2`) e todos os serviços usam a rede `recipes_app` com `restart: unless-stopped`; variáveis de ambiente para a stack vêm do `.env` da raiz (`.env.example` lá).
 - Hardening existente e a preservar: `no-new-privileges`, `read_only: true` com tmpfs `/tmp`, `init: true`, `depends_on` com `condition: service_healthy`, uploads em volume named. `VITE_API_URL` é build-arg apontando para a URL visível ao navegador do host (não hostname interno Docker).
 
 ## CORS
